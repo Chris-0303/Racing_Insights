@@ -2,6 +2,7 @@
 
 Formel1 Projekt, 4. Semester, DS23t
 Dieses Readme dient als Dokumentation für unser Projekt.
+Dieses Repository war ursprünglich unter github.zhaw.ch abelegt, wurde aber zur einfacheren Verknüpfung mit Streamlit verlegt.
 
 ## Inhaltsverzeichnis
 1. [App-Link](#app-link)
@@ -73,6 +74,5 @@ Template Datenbericht liegt im Moodle
 
 ### Skripts
 
-Das Skript "data_cleaner.py" dient dazu, eine einheitliche Funktion zu schreiben, mit der die API abgerufen und der gesammelte Datensatz bereinigt und prozessiert wird. Der Data-Cleaner gibt folgende Elemente aus:
--xxx
+Das Skript "data_cleaner.py" dient dazu, eine einheitliche Funktion zu schreiben, mit der die API abgerufen und der gesammelte Datensatz bereinigt und prozessiert wird. Der Data-Cleaner nimmt vom User die Inputs Jahr, Rennen und Fahrer entegegen und hat als Ausgabe ein Dataframe mit den Runden des Rennens inklusive benutzerdefinierter Zusatzelemente wie dem integrierten Wetter.
 Weiter gibt es die Pages. Jede Page beheimatet ein Skript für eine Visualisierung. Innerhalb jeder Page wird zuerst der data_cleaner aufgerufen und danach die Visualisierung programmiert.
