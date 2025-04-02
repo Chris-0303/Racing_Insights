@@ -2,4 +2,3 @@ pandas
 fastf1
 matplotlib
 numpy
-re
