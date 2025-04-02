@@ -19,7 +19,7 @@ Dieses Repository war ursprünglich auf github.zhaw.ch abelegt, wurde aber zur e
 
 ## App-Link
 
-Die Streamlit-App zum Projekt ist verfügbar unter: XXX
+Die Streamlit-App zum Projekt ist verfügbar unter: https://racing-insights-vdss.streamlit.app/
 
 
 ## Contributors
@@ -77,7 +77,7 @@ Template Datenbericht liegt im Moodle
 
 ### Skripts
 
-Das Skript "helper_functions.py" dient dazu, einheitliche Funktionen zu schreiben, mit der die API abgerufen und der gesammelte Datensatz bereinigt und prozessiert wird. Es existieren folgende Funktionen:
+Das Skript "helper_functions.py" liegt im Ordner utils (der rein der Strukturierung dient) und dient dazu, einheitliche Funktionen zu schreiben, mit der die API abgerufen und der gesammelte Datensatz bereinigt und prozessiert wird. Es existieren folgende Funktionen:
 -load_races: Input: Jahr (User-Input). Ausgabe: Rennkalender dieses Jahres
 -load_data: Input: Jahr (User-Input), Rennen (User-Input). Ausgabe: Session des gewünschten Rennens
 -data_cleaner: Input: Session. Ausgaben: 

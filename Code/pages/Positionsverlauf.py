@@ -1,7 +1,7 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import fastf1.plotting
-from helper_functions.py import load_races, load_data, data_cleaner
+from utils.helper_functions import load_races, load_data, data_cleaner
 
 #load agreed on color scheme from package
 fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
