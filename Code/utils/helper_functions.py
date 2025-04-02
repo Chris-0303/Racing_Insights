@@ -1,12 +1,15 @@
 import fastf1
 import numpy as np
+import pandas as pd
 import re
+from datetime import date
 
 def load_races(year: int):
     """
-    Lädt den Rennkalender für ein bestimmtes Jahr und gibt ihn zurück.
-    Parameter: Jahr
-    Return: Rennkalender
+    Lädt den Rennkalender für ein bestimmtes Jahr und gibt ihn zurück. Für das aktuelle Jahr werden nur Rennen
+    berücksichtigt, die bereits stattgefunden haben.
+    Parameter: year
+    Return: calendar
     """
     calendar = fastf1.get_event_schedule(year, include_testing=False)
     #create custom event name and also remove the doubling of event locations with regex
@@ -17,14 +20,19 @@ def load_races(year: int):
         "Race " + calendar['RoundNumber'].astype(str) + " - " + calendar['EventName'] + " - " + calendar['Location']
     )
 
+    #limit races on calendar if year is 2025
+    if year == 2025:
+        today = pd.to_datetime(date.today())
+        calendar = calendar[calendar['EventDate'] < today]
+
     return calendar
 
 def load_data(year: int, race_nr: str):
     """
     Lädt die Session des gewünschten Rennens und gibt sie zurück. Dies ist nicht in den data_cleaner integriert, um das
     abrufen weitere Elemente der Session in den Visualisierungen zu ermöglichen.
-    Parameter: Jahr, Rennnummer
-    Return: Session
+    Parameter: year, race_nr
+    Return: session
     """
     session = fastf1.get_session(year, race_nr, 'R')
     session.load()
@@ -34,7 +42,7 @@ def data_cleaner(session):
     """
     Bereitet die Daten für die Visualisierung auf und gibt dataframes mit den Fahrerinfos sowie den Runden
     des gewünschten Rennens zurück.
-    Parameter: Session
+    Parameter: session
     Return: driver_info, laps
     """
     #load session results, choose columns to just have driver info, customize driver and return for user selection

@@ -33,6 +33,10 @@ Die Streamlit-App zum Projekt ist verfügbar unter: https://racing-insights-vdss
 
 Grundlage unseres Projekts ist das Python-Paket "fastf1", das eine API mit diversen Datenpunkten zu jeder Rennsession der Formel 1 beinhalten und kostenlos zugänglich ist. Die Dokumentation von fastf1 ist verfügbar unter https://docs.fastf1.dev/index.html und wurde von uns während dem Projekt extensiv durchgearbeitet, um die vorhandenen Daten und Möglichkeiten für Insights zu verstehen. 
 
+Aktualität: Rennen sind im Tool ab einem Tag nach dem Rennen verfügbar, sofern das Paket die Daten liefert, was es laut dessen Dokumentation in diesem zeitlichen Rahmen tun sollte.
+
+Farbschema: Zur einheitlichen Visualisierung wird in allen Anwendungen das im Paket inbegriffene Farbschema "fastf1" verwendet.
+
 ### Projektplan
 
 ->Brauchen wir noch einen Projektplan oder so? einfach simpel was in welchen Wochen etwa gemacht
@@ -42,12 +46,13 @@ Grundlage unseres Projekts ist das Python-Paket "fastf1", das eine API mit diver
 In der Folge werden die im Projekt verwendeten Python-Pakete aufgelistet und erklärt, zu welchem Zweck sie gebraucht wurden
 -streamlit (Webapp)
 -fastf1 (Datenbeschaffung)
--matplotlib (Datenvisualisierung)
--seaborn (Datenvisualisierung)
 -warnings (Datenexploration)
 -pandas (Datenbearbeitung)
 -numpy (Datenbearbeitung)
 -re (Datenbearbeitung)
+-datetime (Datenbearbeitung)
+-matplotlib (Datenvisualisierung)
+-seaborn (Datenvisualisierung)
 
 ## Web-App
 
@@ -85,5 +90,3 @@ Das Skript "helper_functions.py" liegt im Ordner utils (der rein der Strukturier
 -- laps: Dataframe mit den Runden des Rennens inklusive benutzerdefinierter Zusatzelemente wie dem Wetter.
 
 Weiter gibt es die Pages. Jede Page beheimatet ein Skript für eine Visualisierung. Innerhalb jeder Page wird zuerst helper_functions aufgerufen und danach das abrufen der User-Inputs sowie die Visualisierung programmiert.
-
-Zur einheitlichen Visualisierung wird in allen Anwendungen das im Paket inbegriffene Farbschema "fastf1" verwendet.
