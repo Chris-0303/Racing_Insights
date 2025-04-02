@@ -16,8 +16,8 @@ def load_races(year: int):
     calendar['CustomEventName'] = np.where(
         calendar.apply(lambda row: re.search(r'\b' + re.escape(row['Location']) + r'\b', row['EventName'], re.IGNORECASE),
                        axis=1),
-        "Race " + calendar['RoundNumber'].astype(str) + " - " + calendar['EventName'],
-        "Race " + calendar['RoundNumber'].astype(str) + " - " + calendar['EventName'] + " - " + calendar['Location']
+        "Rennen " + calendar['RoundNumber'].astype(str) + " - " + calendar['EventName'],
+        "Rennen " + calendar['RoundNumber'].astype(str) + " - " + calendar['EventName'] + " - " + calendar['Location']
     )
 
     #limit races on calendar if year is 2025
