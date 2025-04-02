@@ -25,6 +25,9 @@ if year: #only continue in code once year has been chosen by user
         #convert race string to race number (expecting just one value to be correct, therefore using iloc[0])
         race_nr = calendar.loc[calendar['CustomEventName'] == race_str, 'RoundNumber'].iloc[0]
 
+        #race name for viz
+        race_name = calendar.loc[calendar['CustomEventName'] == race_str, 'EventName'].iloc[0]
+
         with st.spinner("Daten werden geladen ..."):
             #load data of the chosen race
             dat = load_data(year, race_nr)
@@ -42,14 +45,15 @@ if year: #only continue in code once year has been chosen by user
             style = fastf1.plotting.get_driver_style(identifier=abb, style=['color', 'linestyle'], session=dat)
             ax.plot(drv_laps['LapNumber'], drv_laps['Position'], label=abb, **style)
 
-        #set ax properties
+        #set ax properties and titles
+        fig.suptitle(f"Positionsverlauf, {race_name}, {year}", fontsize=14, fontweight='bold')
         ax.set_ylim([20.5, 0.5])
         ax.set_yticks([1, 5, 10, 15, 20])
-        ax.set_xlabel('Lap')
+        ax.set_xlabel('Runde')
         ax.set_ylabel('Position')
 
         #add legend
         ax.legend(bbox_to_anchor=(1.0, 1.02))
         plt.tight_layout()
-        plt.show()
+        st.pyplot(fig)
 
