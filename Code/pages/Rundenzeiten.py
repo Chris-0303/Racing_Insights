@@ -1,0 +1,134 @@
+import streamlit as st
+import matplotlib.pyplot as plt
+import seaborn as sns
+import fastf1.plotting
+import matplotlib.patches as mpatches
+from utils.helper_functions import load_races, load_data, data_cleaner
+
+#load agreed on color scheme from package
+fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
+                          color_scheme='fastf1')
+
+st.title("Rundenzeitanalyse nach Fahrer")
+st.subheader("Filtere Jahr/Rennen/Fahrer, um die gewünschte Analyse zu sehen")
+
+#ask user to choose year
+year = st.selectbox("Wähle eine Saison", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
+                    index=None, placeholder="Saison")
+
+if year: #only continue in code once year has been chosen by user
+    #load race calendar for that year
+    calendar = load_races(year)
+
+    #ask user to choose race from that year
+    race_str = st.selectbox("Wähle ein Rennen", calendar['CustomEventName'], index=None)
+
+    if race_str: #only continue in code once race has been chosen by user
+        #convert race string to race number (expecting just one value to be correct, therefore using iloc[0])
+        race_nr = calendar.loc[calendar['CustomEventName'] == race_str, 'RoundNumber'].iloc[0]
+
+        #race name for viz
+        race_name = calendar.loc[calendar['CustomEventName'] == race_str, 'EventName'].iloc[0]
+
+        with st.spinner("Daten werden geladen ..."):
+            #load data of the chosen race
+            dat = load_data(year, race_nr)
+
+            #prepare data for visualization
+            driver_info, laps = data_cleaner(dat)
+
+        #ask user to choose driver(s), number of drivers to compare and convert to their driver abbreviation
+        driver_options = sorted(driver_info['CustomDriverName'].tolist())
+        drivers_amount = st.selectbox("Wie viele Fahrer willst du vergleichen?", [2, 4], index=None)
+        drivers_str = st.multiselect("Wähle deine Fahrer:", options=driver_options, default=driver_options)
+
+        #print warning and stop code execution if more than three drivers are selected
+        if len(drivers_str) != drivers_amount:
+            st.warning(f"Achtung: Wähle deine gewünschte Anzahl Fahrer")
+            st.stop()
+
+        drivers_abbr = driver_info.loc[driver_info['CustomDriverName'].isin(drivers_str), 'Abbreviation'].tolist()
+
+        #calc number of rows need in viz based on drivers_amount
+        rows = 1 if drivers_amount == 2 else 2
+
+        # Compound color mapping
+        compound_palette = fastf1.plotting.get_compound_mapping(session=dat)
+
+        # Create 2x2 subplot layout
+        fig, axes = plt.subplots(rows, 2, figsize=(12, 7*rows), sharey=True)
+        axes = axes.flatten()
+
+        # Plot each driver
+        for i, driver in enumerate(drivers_abbr):
+            ax = axes[i]
+            driver_laps = laps[laps['Driver'] == driver].copy()
+
+            sns.scatterplot(data=driver_laps, x="LapNumber", y="LapTime", hue="Compound",
+                            palette=compound_palette, ax=ax, s=100, linewidth=0, legend=False)
+
+            # Highlight rainy laps with a blue bar at the top
+            raining_laps = driver_laps[driver_laps['Raining'] == True]['LapNumber']
+
+            for lap in raining_laps:
+                ax.axvspan(lap - 0.5, lap + 0.5, ymin=0.98, ymax=1.0, color='deepskyblue', alpha=0.7)
+
+            # Safety Car laps: TrackStatus == 4 or 6
+            sc_laps = driver_laps[driver_laps['TrackStatus'].isin([4, 6])]['LapNumber']
+
+            for lap in sc_laps:
+                ax.axvspan(lap - 0.5, lap + 0.5, ymin=0.96, ymax=0.98, color='darkorange', alpha=0.7)
+
+            # Highlight pit stop laps with light grey background
+            pit_laps = driver_laps[driver_laps['PitInTime'].notna()]['LapNumber']
+
+            for lap in pit_laps:
+                ax.axvspan(lap - 0.5, lap + 1.5, color='lightgrey', alpha=0.2, zorder=0)
+
+            d_name = driver_info.loc[driver_info['Abbreviation'] == driver, 'FullName'].values[0]
+            d_team = driver_info.loc[driver_info['Abbreviation'] == driver, 'TeamName'].values[0]
+            d_pos = driver_info.loc[driver_info['Abbreviation'] == driver, 'ClassifiedPosition'].values[0]
+
+            ax.set_title(f"{d_name}, {d_team} (Rang {d_pos})", fontsize=15)
+            ax.set_xlabel("Runde", fontsize=13)
+            if i % 2 == 0:
+                ax.set_ylabel("Rundenzeit", fontsize=13)
+            ax.set_xlim(left=0)
+            ax.invert_yaxis()
+            ax.grid(alpha=0.3)
+
+        # Identify all compounds actually used in the laps data
+        used_compounds = laps['Compound'].dropna().unique()
+
+        # Build custom legend handles
+        handles = [
+            mpatches.Patch(color=compound_palette[compound], label=compound)
+            for compound in used_compounds if compound in compound_palette
+        ]
+
+        # Add shared legend to the bottom
+        compound_legend = fig.legend(handles, [h.get_label() for h in handles],
+                                     title="Reifentyp", loc='lower center', bbox_to_anchor=(0.3, -0.01), ncol=len(handles), frameon=False,
+                                     fontsize='medium', title_fontsize='large', handletextpad=0.8, columnspacing=1.5, handlelength=1.5)
+
+        # Rain and Safety Car patches
+        rain_patch = mpatches.Patch(color='deepskyblue', label='REGEN')
+        sc_patch = mpatches.Patch(color='darkorange', label='SAFETY CAR')
+        pit_patch = mpatches.Patch(color='lightgrey', alpha=0.5, label='BOXENSTOPP')
+
+
+        # Add second legend with both patches
+        context_legend = fig.legend(handles=[rain_patch, sc_patch, pit_patch],
+                                    title="Kontextinformationen", loc='lower center', bbox_to_anchor=(0.73, -0.01), ncol=3, frameon=False,
+                                    fontsize='medium', title_fontsize='large', columnspacing=1.5)
+
+        # Make sure both legends are registered
+        fig.add_artist(compound_legend)
+        fig.add_artist(context_legend)
+
+        # Add one title at the top
+        fig.suptitle(f"{year} {race_name} – Vergleich der Rundenzeiten nach Fahrer", fontsize=24)
+
+        # Adjust layout to make room for title
+        plt.tight_layout(rect=[0, 0.035, 1, 0.98])
+        st.pyplot(fig)

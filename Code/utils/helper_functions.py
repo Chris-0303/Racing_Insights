@@ -46,7 +46,7 @@ def data_cleaner(session):
     Return: driver_info, laps
     """
     #load session results, choose columns to just have driver info, customize driver and return for user selection
-    driver_info = session.results[['DriverNumber', 'Abbreviation', 'FullName', 'TeamName']]
+    driver_info = session.results[['DriverNumber', 'Abbreviation', 'FullName', 'TeamName', 'ClassifiedPosition']]
     driver_info['CustomDriverName'] = (driver_info['DriverNumber'] + " - " + driver_info['FullName']
                                        + " - " + driver_info['TeamName'])
 
