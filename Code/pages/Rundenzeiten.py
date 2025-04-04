@@ -1,13 +1,12 @@
 import streamlit as st
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+import matplotlib.ticker as ticker
 import seaborn as sns
 import fastf1.plotting
-import matplotlib.patches as mpatches
 from utils.helper_functions import load_races, load_data, data_cleaner
 
-#rundenzeiten von pitstop löschen
-#rang bei dnf etc richtig anschreiben
-#im streamlit sind die rundenzeiten broken
+#ladebalken im streamlit??
 
 #load agreed on color scheme from package
 fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
@@ -34,12 +33,24 @@ if year: #only continue in code once year has been chosen by user
         #race name for viz
         race_name = calendar.loc[calendar['CustomEventName'] == race_str, 'EventName'].iloc[0]
 
+        #cache data so it doesnt always re load when choosing drivers (has to be done with a function)
+        @st.cache_data(show_spinner=False)
+        def get_race_data(year, race_nr):
+            dat = load_data(year, race_nr)
+            driver_info, laps = data_cleaner(dat)
+            return dat, driver_info, laps
+
+        with st.spinner("Daten werden geladen ..."):
+            dat, driver_info, laps = get_race_data(year, race_nr)
+
+        """
         with st.spinner("Daten werden geladen ..."):
             #load data of the chosen race
             dat = load_data(year, race_nr)
 
             #prepare data for visualization
             driver_info, laps = data_cleaner(dat)
+        """
 
         #ask user to choose driver(s), number of drivers to compare and convert to their driver abbreviation
         driver_options = sorted(driver_info['CustomDriverName'].tolist())
@@ -63,7 +74,7 @@ if year: #only continue in code once year has been chosen by user
             compound_palette = fastf1.plotting.get_compound_mapping(session=dat)
 
             #create 2x2 subplot layout
-            fig, axes = plt.subplots(rows, 2, figsize=(12, 7*rows), sharey=True)
+            fig, axes = plt.subplots(rows, 2, figsize=(16, 8*rows), sharey=True)
             axes = axes.flatten()
 
             #loop to plot each driver
@@ -71,7 +82,7 @@ if year: #only continue in code once year has been chosen by user
                 ax = axes[i]
                 driver_laps = laps[laps['Driver'] == driver].copy()
 
-                sns.scatterplot(data=driver_laps, x="LapNumber", y="LapTime", hue="Compound",
+                sns.scatterplot(data=driver_laps, x="LapNumber", y="LapTimeSeconds", hue="Compound",
                                 palette=compound_palette, ax=ax, s=100, linewidth=0, legend=False)
 
                 #Rain Laps Squares
@@ -95,10 +106,19 @@ if year: #only continue in code once year has been chosen by user
                 d_pos = driver_info.loc[driver_info['Abbreviation'] == driver, 'ClassifiedPosition'].values[0]
 
                 #titles and more
-                ax.set_title(f"{d_name}, {d_team} (Rang {d_pos})", fontsize=15)
+                ax.set_title(f"{d_name}, {d_team} (Rang: {d_pos})", fontsize=15)
                 ax.set_xlabel("Runde", fontsize=13)
+
+                #y labels are complicated because streamlit doesnt work well with original time formats
+                def format_laptime(x, pos):
+                    mins = int(x // 60)
+                    secs = int(x % 60)
+                    return f"{mins}:{secs:02d}"
+                ax.yaxis.set_major_formatter(ticker.FuncFormatter(format_laptime))
+
                 if i % 2 == 0:
                     ax.set_ylabel("Rundenzeit", fontsize=13)
+
                 ax.set_xlim(left=0)
                 ax.invert_yaxis()
                 ax.grid(alpha=0.3)

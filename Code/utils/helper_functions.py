@@ -45,8 +45,11 @@ def data_cleaner(session):
     Parameter: session
     Return: driver_info, laps
     """
-    #load session results, choose columns to just have driver info, customize driver and return for user selection
+    #load session results, choose columns to just have driver info
     driver_info = session.results[['DriverNumber', 'Abbreviation', 'FullName', 'TeamName', 'ClassifiedPosition']]
+    #change markers for DNF, DSQ and DNS in ClassifiedPosition, customize driver name
+    driver_info['ClassifiedPosition'] = driver_info['ClassifiedPosition'].replace({'R': 'DNF', 'E': 'DNF', 'D': 'DSQ',
+                                                                                   'F': 'DNS', 'W': 'DNF', 'N': 'DNF'})
     driver_info['CustomDriverName'] = (driver_info['DriverNumber'] + " - " + driver_info['FullName']
                                        + " - " + driver_info['TeamName'])
 
@@ -65,5 +68,8 @@ def data_cleaner(session):
         m = td.components.minutes
         return (h, m) in rain_times
     laps["Raining"] = laps["Time"].apply(is_raining)
+
+    #needed transformation for correct plotting
+    laps["LapTimeSeconds"] = laps["LapTime"].dt.total_seconds()
 
     return driver_info, laps
