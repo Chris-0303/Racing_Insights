@@ -97,8 +97,8 @@ if year: #only continue in code once year has been chosen by user
                 d_pos = driver_info.loc[driver_info['Abbreviation'] == driver, 'ClassifiedPosition'].values[0]
 
                 #titles and more
-                ax.set_title(f"{d_name}, {d_team} (Rang: {d_pos})", fontsize=17)
-                ax.set_xlabel("Runde", fontsize=15)
+                ax.set_title(f"{d_name}, {d_team} (Rang: {d_pos})", fontsize=18)
+                ax.set_xlabel("Runde", fontsize=16)
 
                 #y labels are complicated because streamlit doesnt work well with original time formats
                 def format_laptime(x, pos):
@@ -108,9 +108,10 @@ if year: #only continue in code once year has been chosen by user
                 ax.yaxis.set_major_formatter(ticker.FuncFormatter(format_laptime))
 
                 if i % 2 == 0:
-                    ax.set_ylabel("Rundenzeit", fontsize=15)
+                    ax.set_ylabel("Rundenzeit", fontsize=16)
 
                 ax.set_xlim(left=0)
+                ax.tick_params(axis='both', labelsize=14)
                 ax.invert_yaxis()
                 ax.grid(alpha=0.3)
 
