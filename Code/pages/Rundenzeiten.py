@@ -43,15 +43,6 @@ if year: #only continue in code once year has been chosen by user
         with st.spinner("Daten werden geladen ..."):
             dat, driver_info, laps = get_race_data(year, race_nr)
 
-        """
-        with st.spinner("Daten werden geladen ..."):
-            #load data of the chosen race
-            dat = load_data(year, race_nr)
-
-            #prepare data for visualization
-            driver_info, laps = data_cleaner(dat)
-        """
-
         #ask user to choose driver(s), number of drivers to compare and convert to their driver abbreviation
         driver_options = sorted(driver_info['CustomDriverName'].tolist())
         drivers_amount = st.selectbox("Wie viele Fahrer willst du vergleichen?", [2, 4], index=None)
@@ -91,7 +82,7 @@ if year: #only continue in code once year has been chosen by user
                     ax.axvspan(lap - 0.5, lap + 0.5, ymin=0.98, ymax=1.0, color='deepskyblue', alpha=0.7)
 
                 #Safety Car Laps Squares
-                sc_laps = driver_laps[driver_laps['TrackStatus'].isin([4, 6])]['LapNumber']
+                sc_laps = driver_laps[driver_laps['TrackStatus'].isin(['4', '6'])]['LapNumber']
                 for lap in sc_laps:
                     ax.axvspan(lap - 0.5, lap + 0.5, ymin=0.96, ymax=0.98, color='darkorange', alpha=0.7)
 
@@ -106,8 +97,8 @@ if year: #only continue in code once year has been chosen by user
                 d_pos = driver_info.loc[driver_info['Abbreviation'] == driver, 'ClassifiedPosition'].values[0]
 
                 #titles and more
-                ax.set_title(f"{d_name}, {d_team} (Rang: {d_pos})", fontsize=15)
-                ax.set_xlabel("Runde", fontsize=13)
+                ax.set_title(f"{d_name}, {d_team} (Rang: {d_pos})", fontsize=17)
+                ax.set_xlabel("Runde", fontsize=15)
 
                 #y labels are complicated because streamlit doesnt work well with original time formats
                 def format_laptime(x, pos):
@@ -117,7 +108,7 @@ if year: #only continue in code once year has been chosen by user
                 ax.yaxis.set_major_formatter(ticker.FuncFormatter(format_laptime))
 
                 if i % 2 == 0:
-                    ax.set_ylabel("Rundenzeit", fontsize=13)
+                    ax.set_ylabel("Rundenzeit", fontsize=15)
 
                 ax.set_xlim(left=0)
                 ax.invert_yaxis()
@@ -134,7 +125,7 @@ if year: #only continue in code once year has been chosen by user
 
             compound_legend = fig.legend(handles, [h.get_label() for h in handles],
                                          title="Reifentyp", loc='lower center', bbox_to_anchor=(0.3, -0.01), ncol=len(handles), frameon=False,
-                                         fontsize='medium', title_fontsize='large', handletextpad=0.8, columnspacing=1.5, handlelength=1.5)
+                                         fontsize='large', title_fontsize='x-large', handletextpad=0.8, columnspacing=1.5, handlelength=1.5)
 
             #Custom Legend 2 - Context Information
             rain_patch = mpatches.Patch(color='deepskyblue', label='REGEN')
@@ -143,7 +134,7 @@ if year: #only continue in code once year has been chosen by user
 
             context_legend = fig.legend(handles=[rain_patch, sc_patch, pit_patch],
                                         title="Kontextinformationen", loc='lower center', bbox_to_anchor=(0.73, -0.01), ncol=3, frameon=False,
-                                        fontsize='medium', title_fontsize='large', columnspacing=1.5)
+                                        fontsize='large', title_fontsize='x-large', columnspacing=1.5)
 
             fig.add_artist(compound_legend)
             fig.add_artist(context_legend)
