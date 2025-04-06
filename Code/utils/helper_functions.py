@@ -72,4 +72,7 @@ def data_cleaner(session):
     #needed transformation for correct plotting
     laps["LapTimeSeconds"] = laps["LapTime"].dt.total_seconds()
 
+    #rename missing values in tyre data (seen in 2018 data)
+    laps['Compound'] = laps['Compound'].replace('nan', 'NODATA')
+
     return driver_info, laps

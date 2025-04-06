@@ -1,13 +1,10 @@
 import streamlit as st
-import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib.ticker as ticker
 import seaborn as sns
 import fastf1.plotting
 from utils.helper_functions import load_races, load_data, data_cleaner
-
-#inputbox zum rausfiltern von boxenstops
 
 #load agreed on color scheme from package
 fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
@@ -65,9 +62,9 @@ if year: #only continue in code once year has been chosen by user
             #calc number of rows need in viz based on drivers_amount
             rows = 1 if drivers_amount == 2 else 2
 
-            #compound color mapping and add (can only be done after loading data)
+            #compound color mapping and add gray just in case (missing tyre values seen in 2018 data)
             compound_palette = fastf1.plotting.get_compound_mapping(session=dat)
-            compound_palette[np.nan] = 'gray'
+            compound_palette['NODATA'] = '#808080'
 
             #create 2x2 subplot layout
             fig, axes = plt.subplots(rows, 2, figsize=(16, 8*rows), sharey=True)
