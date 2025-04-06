@@ -6,7 +6,7 @@ import seaborn as sns
 import fastf1.plotting
 from utils.helper_functions import load_races, load_data, data_cleaner
 
-#ladebalken im streamlit??
+#inputbox zum rausfiltern von boxenstops
 
 #load agreed on color scheme from package
 fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
@@ -48,6 +48,9 @@ if year: #only continue in code once year has been chosen by user
         drivers_amount = st.selectbox("Wie viele Fahrer willst du vergleichen?", [2, 4], index=None)
         drivers_str = st.multiselect("Wähle deine Fahrer:", options=driver_options, default=[])
 
+        #ask if pit laps should be excluded or not (default is no)
+        hide_pit_laps = st.checkbox("Boxenstop-Rundenzeiten ausblenden?", value=False)
+
         if drivers_str: #only continue in code once driver(s) have been chosen by user
 
             #print warning and stop code execution if more than three drivers are selected
@@ -72,6 +75,15 @@ if year: #only continue in code once year has been chosen by user
             for i, driver in enumerate(drivers_abbr):
                 ax = axes[i]
                 driver_laps = laps[laps['Driver'] == driver].copy()
+
+                #Finde Boxenstopp-Runden für mögliche Ausblendung
+                pit_laps = driver_laps[
+                    driver_laps['PitInTime'].notna() | driver_laps['PitOutTime'].notna()
+                    ]['LapNumber'].drop_duplicates()
+
+                #Diese exkludieren je nach Inputbox
+                if hide_pit_laps:
+                    driver_laps = driver_laps[~driver_laps['LapNumber'].isin(pit_laps)]
 
                 sns.scatterplot(data=driver_laps, x="LapNumber", y="LapTimeSeconds", hue="Compound",
                                 palette=compound_palette, ax=ax, s=100, linewidth=0, legend=False)
@@ -130,7 +142,7 @@ if year: #only continue in code once year has been chosen by user
 
             #Custom Legend 2 - Context Information
             rain_patch = mpatches.Patch(color='deepskyblue', label='REGEN')
-            sc_patch = mpatches.Patch(color='darkorange', label='SAFETY CAR')
+            sc_patch = mpatches.Patch(color='darkorange', label='SAFETY CAR / VSC')
             pit_patch = mpatches.Patch(color='lightgrey', alpha=0.5, label='BOXENSTOPP')
 
             context_legend = fig.legend(handles=[rain_patch, sc_patch, pit_patch],

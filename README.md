@@ -33,9 +33,15 @@ Die Streamlit-App zum Projekt ist verfügbar unter: https://racing-insights-vdss
 
 Grundlage unseres Projekts ist das Python-Paket "fastf1", das eine API mit diversen Datenpunkten zu jeder Rennsession der Formel 1 beinhalten und kostenlos zugänglich ist. Die Dokumentation von fastf1 ist verfügbar unter https://docs.fastf1.dev/index.html und wurde von uns während dem Projekt extensiv durchgearbeitet, um die vorhandenen Daten und Möglichkeiten für Insights zu verstehen. 
 
+Das Ziel das Projekt ist es, wie ausführlicher im Konzept beschrieben, grafische Auswertungen der Leistung eines Fahrers oder mehrere Fahrer in einem Rennen zur Verfügung zu stellen und damit anhand von Daten Insights zu einem Rennen zu geben. Die Grafiken sollen in einem Stil existieren, wie sie zum Beispiel auf der Webseite eines Motorsportmagazins zu sehen sein könnten. 
+Somit besteht unsere Zielgruppe aus Fans des Sports, die zusätzliche Informationen und Analysen zum Rennen, das sie mit grosser Wahrscheinlichkeit bereits gesehen haben, suchen. Somit müssen die Grafiken nicht die komplette Geschichte eines Rennens erzählen, sondern können sich auf spezifische Fahrer oder thematische Schwerpunkte fokussieren, anhand derer die Nutzer die Story des Rennens noch einmal detaillierter entdecken.
+Daraus schliesst sich auch, dass Fachbegriffe wie zum Beispiel das Safety Car, VSC (Virtual Safety Car) oder die Reifentypen in den Grafiken erklärt werden müssen.
+
 Aktualität: Rennen sind im Tool ab einem Tag nach dem Rennen verfügbar, sofern das Paket die Daten liefert, was es laut dessen Dokumentation in diesem zeitlichen Rahmen tun sollte.
 
 Farbschema: Zur einheitlichen Visualisierung wird in allen Anwendungen das im Paket inbegriffene Farbschema "fastf1" verwendet.
+
+Endgeräte: Dank der Implementierung mit Streamlit ist unser Tool auch auf Mobilgeräten problemlos nutzbar.
 
 ### Projektplan
 
@@ -90,5 +96,5 @@ Das Skript "helper_functions.py" liegt im Ordner utils (der rein der Strukturier
 -- laps: Dataframe mit den Runden des Rennens inklusive benutzerdefinierter Zusatzelemente wie dem Wetter.
 
 Weiter gibt es die Pages. Jede Page beheimatet ein Skript für eine Visualisierung. Innerhalb jeder Page wird zuerst helper_functions aufgerufen und danach das abrufen der User-Inputs sowie die Visualisierung programmiert.
--Positionsverlauf: In der Visualisierung Positionsverlauf wird …
--Rundenzeiten: In der Visualisierung Rundenzeiten wird … 
+-Positionsverlauf: In der Visualisierung Positionsverlauf wird der Verlauf des Rennens anhand der Positionen aller Fahrer nach Runde dargestellt. 
+-Rundenzeiten: In der Visualisierung Rundenzeiten können die Nutzer bis zu vier Fahrer wählen, deren Rennverlauf sie anhand ihrer einzelnen Runden darstellen wollen. Neben der Entwicklung der Rundenzeiten bieten auch Elemente wie die Darstellung von Regen, Safety-Car-Phasen, Boxenstopps sowie genutzten Reifentypen Einblick in die Unterschiede der Rennstrategien verschiedener Fahrer.
