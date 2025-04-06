@@ -1,4 +1,5 @@
 import streamlit as st
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib.ticker as ticker
@@ -49,7 +50,7 @@ if year: #only continue in code once year has been chosen by user
         drivers_str = st.multiselect("Wähle deine Fahrer:", options=driver_options, default=[])
 
         #ask if pit laps should be excluded or not (default is no)
-        hide_pit_laps = st.checkbox("Boxenstop-Rundenzeiten ausblenden?", value=False)
+        hide_pit_laps = st.selectbox("Boxenstop-Rundenzeiten ausblenden?", options=["Ja", "Nein"], index=1)
 
         if drivers_str: #only continue in code once driver(s) have been chosen by user
 
@@ -64,8 +65,9 @@ if year: #only continue in code once year has been chosen by user
             #calc number of rows need in viz based on drivers_amount
             rows = 1 if drivers_amount == 2 else 2
 
-            #compound color mapping
+            #compound color mapping and add (can only be done after loading data)
             compound_palette = fastf1.plotting.get_compound_mapping(session=dat)
+            compound_palette[np.nan] = 'gray'
 
             #create 2x2 subplot layout
             fig, axes = plt.subplots(rows, 2, figsize=(16, 8*rows), sharey=True)
@@ -82,7 +84,7 @@ if year: #only continue in code once year has been chosen by user
                     ]['LapNumber'].drop_duplicates()
 
                 #Diese exkludieren je nach Inputbox
-                if hide_pit_laps:
+                if hide_pit_laps == "Ja":
                     driver_laps = driver_laps[~driver_laps['LapNumber'].isin(pit_laps)]
 
                 sns.scatterplot(data=driver_laps, x="LapNumber", y="LapTimeSeconds", hue="Compound",
