@@ -83,7 +83,7 @@ if year: #only continue in code once year has been chosen by user
 
                 #Diese exkludieren je nach Inputbox
                 if hide_pit_laps == "Ja":
-                    driver_laps.loc[driver_laps['LapNumber'].isin(pit_laps), 'LapTime'] = np.nan
+                    driver_laps.loc[driver_laps['LapNumber'].isin(pit_laps), 'LapTimeSeconds'] = np.nan
 
                 sns.scatterplot(data=driver_laps, x="LapNumber", y="LapTimeSeconds", hue="Compound",
                                 palette=compound_palette, ax=ax, s=100, linewidth=0, legend=False)
