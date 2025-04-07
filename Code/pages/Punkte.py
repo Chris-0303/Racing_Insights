@@ -59,17 +59,16 @@ if year: #only continue in code once year has been chosen by user
     
 
     # Plot-Setup
-    plt.figure(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(12, 6))
 
-    # Jeder Fahrer bekommt eine Linie
+
     for driver, group in combined_df.groupby("Abbreviation"):
+    color = "#" + group["TeamColor"].iloc[0]
+    ax.plot(group["RoundNumber"], group["CumulativePoints"], label=driver, color=color)
 
-        color = "#" + group["TeamColor"].iloc[0]
-        plt.plot(group["RoundNumber"], group["CumulativePoints"], label=driver, color = color)
-
-    plt.title(f"Total Punkte der Fahrer – Saison {year}")    
-    plt.xlabel("Runde")
-    plt.ylabel("Total Punkte")
-    plt.legend(loc='upper left', bbox_to_anchor=(1, 1))  # Legende rechts außen
-    plt.grid(True, linestyle='--', alpha=0.5)
-    plt.show()
+    ax.set_title(f"Total Punkte der Fahrer – Saison {year}")
+    ax.set_xlabel("Runde")
+    ax.set_ylabel("Total Punkte")
+    ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
+    ax.grid(True, linestyle='--', alpha=0.5)    
+    st.pyplot(fig)
