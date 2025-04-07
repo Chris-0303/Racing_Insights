@@ -8,6 +8,8 @@ from utils.helper_functions import load_races, load_data, data_cleaner
 fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                           color_scheme='fastf1')
 
+fastf1.Cache.enable_cache('./f1_cache')  # Lokaler Cache empfohlen!
+
 st.title("Punkteverlauf über die Season")
 st.subheader("Filtere Jahr um den Punkteverlauf der Spieler zu sehen")
 
@@ -24,20 +26,23 @@ if year: #only continue in code once year has been chosen by user
     #new df to save data from each round inot one df
     combined_df = pd.DataFrame()
     for roundnr in calendar_filtered["RoundNumber"]:
+                         
+        #get RoundNUmber and EvnetName
+        r_nr = calendar_filtered.loc[calendar_filtered["RoundNumber"] == roundnr, "RoundNumber"].values[0]
+        event_name = calendar_filtered.loc[calendar_filtered["RoundNumber"] == roundnr, "EventName"].values[0]
+        
         #infos Text "Daten werden geladen"
         with st.spinner("Daten werden geladen ..."):
+            print(f"Lade Runde:{roundnr} - {event_name}")
         
             #load each round for choosen year 
-            session = fastf1.get_session(2023, roundnr, 'Race')
+            session = fastf1.get_session(year, roundnr, 'Race')
             session.load(telemetry=False, weather=False)
                     
             #save Results in a DataFrame (only keep needed cols)
             results = session.results
             results_filter = pd.DataFrame(results[["DriverNumber", "Abbreviation", "TeamColor", "CountryCode", "Points"]])
-            
-            #get RoundNUmber and EvnetName
-            r_nr = calendar_filtered.loc[calendar_filtered["RoundNumber"] == roundnr, "RoundNumber"].values[0]
-            event_name = calendar_filtered.loc[calendar_filtered["RoundNumber"] == roundnr, "EventName"].values[0]
+
             
             #create new col to have RoundNUmber and EvnetName in DF as well
             results_filter["RoundNumber"] = r_nr
