@@ -8,7 +8,7 @@ from utils.helper_functions import load_races, load_data, data_cleaner
 fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                           color_scheme='fastf1')
 
-fastf1.Cache.enable_cache('./f1_cache')  # Lokaler Cache empfohlen!
+#fastf1.Cache.enable_cache('./f1_cache')  # Lokaler Cache empfohlen!
 
 st.title("Punkteverlauf über die Season")
 st.subheader("Filtere Jahr um den Punkteverlauf der Spieler zu sehen")
