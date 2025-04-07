@@ -63,8 +63,8 @@ if year: #only continue in code once year has been chosen by user
 
 
     for driver, group in combined_df.groupby("Abbreviation"):
-    color = "#" + group["TeamColor"].iloc[0]
-    ax.plot(group["RoundNumber"], group["CumulativePoints"], label=driver, color=color)
+      color = "#" + group["TeamColor"].iloc[0]
+      ax.plot(group["RoundNumber"], group["CumulativePoints"], label=driver, color=color)
 
     ax.set_title(f"Total Punkte der Fahrer – Saison {year}")
     ax.set_xlabel("Runde")
