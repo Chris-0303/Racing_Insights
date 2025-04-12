@@ -44,24 +44,22 @@ if year: #only continue in code once year has been chosen by user
 
         #ask user to choose driver(s), number of drivers to compare and convert to their driver abbreviation
         driver_options = sorted(driver_info['CustomDriverName'].tolist())
-        drivers_amount = st.selectbox("Wie viele Fahrer willst du vergleichen?", [2, 4], index=None)
-        drivers_str = st.multiselect("Wähle deine Fahrer:", options=driver_options, default=[])
+        drivers_str = st.multiselect("Wähle 2 oder 4 Fahrer zum Vergleich:", options=driver_options, default=[])
 
         #ask if pit laps should be excluded or not (default is no)
         hide_pit_laps = st.selectbox("Boxenstop-Rundenzeiten ausblenden?", options=["Ja", "Nein"], index=1)
 
         if drivers_str: #only continue in code once driver(s) have been chosen by user
-
-            #print warning and stop code execution if more than three drivers are selected
-            if len(drivers_str) != drivers_amount:
-                st.warning(f"Achtung: Wähle deine gewünschte Anzahl Fahrer")
+            #print warning and stop code execution if not 2 or 4 drivers are selected
+            if len(drivers_str) not in (2, 4):
+                st.warning(f"Achtung: Wähle 2 oder 4 Fahrer zum Vergleich")
                 st.stop()
 
             #find abbreviations of selected drivers in driver_info
             drivers_abbr = driver_info.loc[driver_info['CustomDriverName'].isin(drivers_str), 'Abbreviation'].tolist()
 
             #calc number of rows need in viz based on drivers_amount
-            rows = 1 if drivers_amount == 2 else 2
+            rows = 1 if len(drivers_str) == 2 else 2
 
             #compound color mapping and add gray just in case (missing tyre values seen in 2018 data)
             compound_palette = fastf1.plotting.get_compound_mapping(session=dat)

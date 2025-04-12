@@ -7,7 +7,10 @@ Dieses Repository war ursprünglich auf github.zhaw.ch abelegt, wurde aber zur e
 ## Inhaltsverzeichnis
 1. [App-Link](#app-link)
 2. [Contributors](#contributors)   
-3. [Dokumentation](#dokumentation)  
+3. [Dokumentation](#dokumentation)
+   1. [Projektplan](#projektplan)
+   2. [Limitationen](#limitationen)  
+   3. [Verwendete Python-Pakete](#verwendete python-pakete)
 4. [Web-App](#web-app)
 5. [Dateien](#dateien)  
    1. [Projektkonzept](#Projektkonzept)
@@ -41,11 +44,13 @@ Aktualität: Rennen sind im Tool ab einem Tag nach dem Rennen verfügbar, sofern
 
 Farbschema: Zur einheitlichen Visualisierung wird in allen Anwendungen das im Paket inbegriffene Farbschema "fastf1" verwendet.
 
-Endgeräte: Dank der Implementierung mit Streamlit ist unser Tool auch auf Mobilgeräten problemlos nutzbar.
-
 ### Projektplan
 
 ->Brauchen wir noch einen Projektplan oder so? einfach simpel was in welchen Wochen etwa gemacht
+
+### Limitationen
+
+Es wurde erkannt, dass das abrufen der API bei jedem Wechsel des Rennens im Input die Nutzung des Tools ziemlich langsam macht. Die vom Projektteam ermittelte Lösung wäre, Daten in einer eigenen Datenbank zwischenzuspeichern und dann die API einfach in regelmässigen Abständen nach neuen Daten zu überprüfen. Da diese Lösung allerdings nicht im Rahmen dieses Projekts liegt, wurde entschieden, diese Lösung hier nicht zu implementieren. 
 
 ### Verwendete Python-Pakete
 
@@ -62,7 +67,7 @@ In der Folge werden die im Projekt verwendeten Python-Pakete aufgelistet und erk
 
 ## Web-App
 
-Hier erklären wir, wie unsere Web-App funktioniert und was die verschiedenen Anwendungen sind ...
+Die Web-App wird via Streamlit gehostet und zieht sich den auszuführenden Code automatisch vom GitHub-Repository. Dank der Implementierung mit Streamlit ist unser Tool auch auf Mobilgeräten problemlos nutzbar.
 
 ## Dateien
 
@@ -97,4 +102,5 @@ Das Skript "helper_functions.py" liegt im Ordner utils (der rein der Strukturier
 
 Weiter gibt es die Pages. Jede Page beheimatet ein Skript für eine Visualisierung. Innerhalb jeder Page wird zuerst helper_functions aufgerufen und danach das abrufen der User-Inputs sowie die Visualisierung programmiert.
 -Positionsverlauf: In der Visualisierung Positionsverlauf wird der Verlauf des Rennens anhand der Positionen aller Fahrer nach Runde dargestellt. 
+-Punkte: xxx
 -Rundenzeiten: In der Visualisierung Rundenzeiten können die Nutzer bis zu vier Fahrer wählen, deren Rennverlauf sie anhand ihrer einzelnen Runden darstellen wollen. Neben der Entwicklung der Rundenzeiten bieten auch Elemente wie die Darstellung von Regen, Safety-Car-Phasen, Boxenstopps sowie genutzten Reifentypen Einblick in die Unterschiede der Rennstrategien verschiedener Fahrer.
