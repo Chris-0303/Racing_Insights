@@ -37,7 +37,7 @@ if year: #only continue in code once year has been chosen by user
 
         if session:
             # Session laden
-            sess = ff1.get_session(year, race_nr, session)
+            sess = ff1.get_session(year, race_name, session)
             sess.load()
 
             # Fahrer-Auswahl aus tatsächlichen Teilnehmern
