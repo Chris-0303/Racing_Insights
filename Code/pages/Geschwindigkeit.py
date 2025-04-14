@@ -8,10 +8,6 @@ from utils.helper_functions import load_races, load_data, data_cleaner
 import fastf1 as ff1
 from fastf1 import plotting
 
-
-
-# Enable cache
-ff1.Cache.enable_cache('./cache')
 plotting.setup_mpl()
 
 # --- User selections ---
