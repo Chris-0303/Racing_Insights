@@ -10,7 +10,7 @@ Dieses Repository war ursprünglich auf github.zhaw.ch abelegt, wurde aber zur e
 3. [Dokumentation](#dokumentation)
    1. [Projektplan](#projektplan)
    2. [Limitationen](#limitationen)  
-   3. [Verwendete Python-Pakete](#verwendete python-pakete)
+   3. [Verwendete Python-Pakete](#verwendete-python-pakete)
 4. [Web-App](#web-app)
 5. [Dateien](#dateien)  
    1. [Projektkonzept](#Projektkonzept)
