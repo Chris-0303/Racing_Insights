@@ -57,15 +57,19 @@ Es wurde erkannt, dass das abrufen der API bei jedem Wechsel des Rennens im Inpu
 ### Verwendete Python-Pakete
 
 In der Folge werden die im Projekt verwendeten Python-Pakete aufgelistet und erklärt, zu welchem Zweck sie gebraucht wurden  
-- streamlit (Webapp)  
-- fastf1 (Datenbeschaffung)  
-- warnings (Datenexploration)  
-- pandas (Datenbearbeitung)  
-- numpy (Datenbearbeitung)  
-- re (Datenbearbeitung)  
-- datetime (Datenbearbeitung)  
-- matplotlib (Datenvisualisierung)  
-- seaborn (Datenvisualisierung)  
+
+| Paket      | Zweck              | 
+| :---:      |     :---:          | 
+| streamlit	 |	Webapp	          |
+| fastf1	    |	Datenbeschaffung	 |
+| warnings	 |	Datenexploration	 |
+| pandas	    |	Datenbearbeitung	 |
+| numpy	    |	Datenbearbeitung	 |
+| re	       |	Datenbearbeitung	 |
+| datetime	 |	Datenbearbeitung	 |
+| matplotlib |	Datenvisualisierung|
+| seaborn	 |	Datenvisualisierung|
+
 
 ## Web-App
 
