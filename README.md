@@ -53,6 +53,7 @@ Farbschema: Zur einheitlichen Visualisierung wird in allen Anwendungen das im Pa
 ### Limitationen
 
 Es wurde erkannt, dass das abrufen der API bei jedem Wechsel des Rennens im Input die Nutzung des Tools ziemlich langsam macht. Die vom Projektteam ermittelte Lösung wäre, Daten in einer eigenen Datenbank zwischenzuspeichern und dann die API einfach in regelmässigen Abständen nach neuen Daten zu überprüfen. Da diese Lösung allerdings nicht im Rahmen dieses Projekts liegt, wurde entschieden, diese Lösung hier nicht zu implementieren. 
+Zudem wurde erkannt, dass es aufgrund unserer leistungsintensiven Datenabfragen an die API von fastf1 immer wieder zu Überlastungen der in der kostenlosen Version von Streamlit verfügbaren Mitteln kommen kann. Auch dies wäre für ein Projekt mit grösserem Rahmen einfach zu lösen mittels Vergrösserung der Kapazität, doch wird im Rahmen dieser Aufgabe so belassen.
 
 ### Verwendete Python-Pakete
 
