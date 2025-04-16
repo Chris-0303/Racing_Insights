@@ -42,15 +42,6 @@ if year: #only continue in code once year has been chosen by user
         driver_options = sorted(driver_info['CustomDriverName'].tolist())
         drivers_str = st.multiselect("Optional: Wähle 2-4 Fahrer zum Vergleich:", options=driver_options, default=[])
 
-        if drivers_str:
-            if len(drivers_str) not in (2, 4):
-                st.warning(f"Achtung: Wähle 2 oder 4 Fahrer zum Vergleich")
-                st.stop()
-            drivers_abbr = driver_info.loc[driver_info['CustomDriverName'].isin(drivers_str), 'Abbreviation'].tolist()
-        else:
-            drivers_abbr = dat.drivers
-
-
         #calculate laps where it was raining for any driver
         rain_laps = sorted(laps[laps["Raining"]]["LapNumber"].unique())
 
@@ -60,12 +51,36 @@ if year: #only continue in code once year has been chosen by user
         #Vizualize (inspired by example from fastf1 documentation)
         fig, ax = plt.subplots(figsize=(8, 6))
 
-        for drv in drivers_abbr:
-            drv_laps = laps.pick_drivers(drv)
+        if drivers_str:
+            if len(drivers_str) not in (2, 4):
+                st.warning(f"Achtung: Wähle 2 oder 4 Fahrer zum Vergleich")
+                st.stop()
+            drivers_abbr = driver_info.loc[driver_info['CustomDriverName'].isin(drivers_str), 'Abbreviation'].tolist()
 
-            abb = drv_laps['Driver'].iloc[0]
-            style = fastf1.plotting.get_driver_style(identifier=abb, style=['color', 'linestyle'], session=dat)
-            ax.plot(drv_laps['LapNumber'], drv_laps['Position'], label=abb, **style)
+            for drv in dat.drivers:
+                drv_laps = laps.pick_drivers(drv)
+                abb = drv_laps['Driver'].iloc[0]
+
+                if abb in drivers_abbr:
+                    # Highlight selected
+                    style = fastf1.plotting.get_driver_style(identifier=abb, style=['color', 'linestyle'], session=dat)
+                    alpha = 1.0
+                    lw = 2.0
+                else:
+                    # Fade others
+                    style = {'color': 'lightgray', 'linestyle': '--'}
+                    alpha = 0.5
+                    lw = 1.0
+
+                ax.plot(drv_laps['LapNumber'], drv_laps['Position'], label=abb, **style, alpha=alpha, linewidth=lw)
+
+        else:
+            for drv in dat.drivers:
+                drv_laps = laps.pick_drivers(drv)
+
+                abb = drv_laps['Driver'].iloc[0]
+                style = fastf1.plotting.get_driver_style(identifier=abb, style=['color', 'linestyle'], session=dat)
+                ax.plot(drv_laps['LapNumber'], drv_laps['Position'], label=abb, **style)
 
         #add top overlay axis for rain/SC indicators
         ax_top = ax.inset_axes([0, 1.02, 1, 0.05], sharex=ax)
@@ -73,10 +88,10 @@ if year: #only continue in code once year has been chosen by user
 
         # Plot rain and SC boxes
         for lap in rain_laps:
-            ax_top.axvspan(lap - 0.5, lap + 0.5, color='deepskyblue', alpha=0.7)
+            ax_top.axvspan(lap - 0.5, lap + 0.5, ymin=1.02, ymax=1.04, color='deepskyblue', alpha=0.7)
 
         for lap in sc_laps:
-            ax_top.axvspan(lap - 0.5, lap + 0.5, color='darkorange', alpha=0.7)
+            ax_top.axvspan(lap - 0.5, lap + 0.5, ymin=1.00, ymax=1.02, color='darkorange', alpha=0.7)
 
         #set ax properties and titles
         fig.suptitle(f"Positionsverlauf, {year} {race_name}", fontsize=14, fontweight='bold')
@@ -91,8 +106,8 @@ if year: #only continue in code once year has been chosen by user
         sc_patch = mpatches.Patch(color='darkorange', label='SAFETY CAR / VSC')
 
         context_legend = fig.legend(
-            handles=[rain_patch, sc_patch], title="Kontextinformationen", loc='upper center', bbox_to_anchor=(0.5, 1.03),
-            ncol=3, frameon=False, fontsize='large', title_fontsize='x-large', columnspacing=1.5
+            handles=[rain_patch, sc_patch], title="Kontextinformationen", loc='upper center', bbox_to_anchor=(0.5, 1.04),
+            ncol=2, frameon=False, fontsize='large', title_fontsize='x-large', columnspacing=1.5
         )
         fig.add_artist(context_legend)
 
