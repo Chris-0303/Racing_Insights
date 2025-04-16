@@ -88,13 +88,13 @@ if year: #only continue in code once year has been chosen by user
 
         # Plot rain and SC boxes
         for lap in rain_laps:
-            ax_top.axvspan(lap - 0.5, lap + 0.5, ymin=1.02, ymax=1.04, color='deepskyblue', alpha=0.7)
+            ax_top.axvspan(lap - 0.5, lap + 0.5, ymin=0.5, ymax=1, color='deepskyblue', alpha=0.7)
 
         for lap in sc_laps:
-            ax_top.axvspan(lap - 0.5, lap + 0.5, ymin=1.00, ymax=1.02, color='darkorange', alpha=0.7)
+            ax_top.axvspan(lap - 0.5, lap + 0.5, ymin=0, ymax=0.5, color='darkorange', alpha=0.7)
 
         #set ax properties and titles
-        fig.suptitle(f"Positionsverlauf, {year} {race_name}", fontsize=14, fontweight='bold')
+        fig.suptitle(f"Positionsverlauf, {year} {race_name}", fontsize=16, fontweight='bold', y = 1.03)
         ax.set_ylim([20.5, 0.5])
         ax.set_yticks([1, 5, 10, 15, 20])
         ax.set_xlabel('Runde')
@@ -106,8 +106,8 @@ if year: #only continue in code once year has been chosen by user
         sc_patch = mpatches.Patch(color='darkorange', label='SAFETY CAR / VSC')
 
         context_legend = fig.legend(
-            handles=[rain_patch, sc_patch], title="Kontextinformationen", loc='upper center', bbox_to_anchor=(0.5, 1.04),
-            ncol=2, frameon=False, fontsize='large', title_fontsize='x-large', columnspacing=1.5
+            handles=[rain_patch, sc_patch], loc='upper center', bbox_to_anchor=(0.5, 0.98),
+            ncol=2, frameon=False, fontsize='medium', title_fontsize='large', columnspacing=1.5
         )
         fig.add_artist(context_legend)
 
