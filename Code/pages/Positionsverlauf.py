@@ -52,8 +52,8 @@ if year: #only continue in code once year has been chosen by user
         fig, ax = plt.subplots(figsize=(8, 6))
 
         if drivers_str:
-            if len(drivers_str) not in (2, 4):
-                st.warning(f"Achtung: Wähle 2 oder 4 Fahrer zum Vergleich")
+            if len(drivers_str) not in (2, 3, 4):
+                st.warning(f"Achtung: Wähle 2-4 Fahrer zum Vergleich")
                 st.stop()
             drivers_abbr = driver_info.loc[driver_info['CustomDriverName'].isin(drivers_str), 'Abbreviation'].tolist()
 
