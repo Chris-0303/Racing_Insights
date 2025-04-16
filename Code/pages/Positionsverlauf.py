@@ -42,11 +42,10 @@ if year: #only continue in code once year has been chosen by user
         driver_options = sorted(driver_info['CustomDriverName'].tolist())
         drivers_str = st.multiselect("Optional: Wähle 2-4 Fahrer zum Vergleich:", options=driver_options, default=[])
 
-        if len(drivers_str) not in (2, 4):
-            st.warning(f"Achtung: Wähle 2 oder 4 Fahrer zum Vergleich")
-            st.stop()
-
         if drivers_str:
+            if len(drivers_str) not in (2, 4):
+                st.warning(f"Achtung: Wähle 2 oder 4 Fahrer zum Vergleich")
+                st.stop()
             drivers_abbr = driver_info.loc[driver_info['CustomDriverName'].isin(drivers_str), 'Abbreviation'].tolist()
         else:
             drivers_abbr = dat.drivers
