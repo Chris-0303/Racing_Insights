@@ -83,7 +83,7 @@ if year: #only continue in code once year has been chosen by user
                 ax.plot(drv_laps['LapNumber'], drv_laps['Position'], label=abb, **style)
 
         #add top overlay axis for rain/SC indicators
-        ax_top = ax.inset_axes([0, 1.02, 1, 0.05], sharex=ax)
+        ax_top = ax.inset_axes([0, 1.00, 1, 0.04], sharex=ax)
         ax_top.axis('off')
 
         # Plot rain and SC boxes
