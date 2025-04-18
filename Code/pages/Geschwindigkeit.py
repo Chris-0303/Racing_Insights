@@ -72,11 +72,15 @@ if year: #only continue in code once year has been chosen by user
 
             for i, abbr in enumerate(drivers_abbr):
                 fastest_lap = sess.laps.pick_driver(abbr).pick_fastest()
-                telemetry = fastest_lap.get_car_data().add_distance().telemetry
+                telemetry = fastest_lap.telemetry
 
                 x = telemetry['X']
                 y = telemetry['Y']
                 speed = telemetry['Speed']
+
+                if x.empty or y.empty or speed.empty:
+                    st.warning(f"Keine Telemetriedaten für {abbr} verfügbar.")
+                    continue
 
                 # Liniensegmente vorbereiten
                 points = np.array([x, y]).T.reshape(-1, 1, 2)
@@ -94,12 +98,13 @@ if year: #only continue in code once year has been chosen by user
 
                 # Farbskala
                 cb_ax = fig.add_axes([
-                    0.05 + (i % 2) * 0.45,   # X Position
-                    0.07 if rows == 1 else (0.05 if i < 2 else 0.01),  # Y Position
+                    0.05 + (i % 2) * 0.45,
+                    0.07 if rows == 1 else (0.05 if i < 2 else 0.01),
                     0.35, 0.015
                 ])
                 mpl.colorbar.ColorbarBase(cb_ax, cmap=colormap, norm=norm, orientation='horizontal')
                 cb_ax.set_title("Speed [km/h]", fontsize=9)
+
 
             plt.tight_layout(rect=[0, 0.12, 1, 0.93])
             st.pyplot(fig)
