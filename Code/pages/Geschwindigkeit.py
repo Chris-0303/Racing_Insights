@@ -71,20 +71,18 @@ if year: #only continue in code once year has been chosen by user
             # Schleife über ausgewählte Fahrer
             for drv in drivers_str:
                 laps = sess.laps.pick_driver(drv).pick_fastest()
-                tel = laps.get_car_data().add_distance().telemetry
-
-                x = tel['X']
-                y = tel['Y']
-                speed = tel['Speed']
+                tel = laps.telemetry['Speed']
+                x = laps.telemetry['X']
+                y = laps.telemetry['Y']  
 
                 # Track-Segmente
                 points = np.array([x, y]).T.reshape(-1, 1, 2)
                 segments = np.concatenate([points[:-1], points[1:]], axis=1)
-                segments_list.append((segments, speed))
+                segments_list.append((segments, tel))
 
                 # Farbgrenzen aktualisieren
-                vmin = min(vmin, speed.min())
-                vmax = max(vmax, speed.max())
+                vmin = min(vmin, tel.min())
+                vmax = max(vmax, tel.max())
 
                 # Stil holen (Farbe pro Fahrer)
                 abbr = sess.laps[sess.laps['Driver'] == laps['Driver'].iloc[0]]['Driver'].iloc[0]
