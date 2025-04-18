@@ -52,46 +52,62 @@ if year: #only continue in code once year has been chosen by user
         if drivers_str:
             #print warning and stop code execution if not 2 or 4 drivers are selected
             if len(drivers_str) not in (2, 4):
-                st.warning(f"Achtung: Wähle 2 oder 4 Fahrer zum Vergleich")
+                st.warning("Achtung: Wähle 2 oder 4 Fahrer zum Vergleich")
                 st.stop()
 
-            #find abbreviations of selected drivers in driver_info
-            drivers_abbr = driver_info.loc[driver_info['CustomDriverName'].isin(drivers_str), 'Abbreviation'].tolist()
+            # Fahrer-Abkürzungen laden
+            driver_info = sess.results[['Abbreviation', 'FullName']]
+            drivers_abbr = driver_info.loc[driver_info['FullName'].isin(drivers_str), 'Abbreviation'].tolist()
 
-            #calc number of rows need in viz based on drivers_amount
-            rows = 1 if len(drivers_str) == 2 else 2
-            lap = sess.laps.pick_drivers(driver_options).pick_fastest()
-
-            # Telemetriedaten
-            x = lap.telemetry['X']
-            y = lap.telemetry['Y']
-            color = lap.telemetry['Speed']
-
-            # Linien-Segmente vorbereiten
-            points = np.array([x, y]).T.reshape(-1, 1, 2)
-            segments = np.concatenate([points[:-1], points[1:]], axis=1)
-
-            # Plot erstellen
-            fig, ax = plt.subplots(sharex=True, sharey=True, figsize=(12, 6.75))
-            fig.suptitle(f'{race_name} {year} - {driver} - Speed', size=24, y=0.97)
-
-            plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.12)
+            fig, ax = plt.subplots(figsize=(12, 6.75))
+            fig.suptitle(f'{race_name} {year} – Speed Map der schnellsten Runden', fontsize=20, y=0.95)
             ax.axis('off')
 
-            # Hintergrund-Track
-            ax.plot(x, y, color='black', linestyle='-', linewidth=16, zorder=0)
+            vmin, vmax = np.inf, -np.inf  # für gemeinsame Farbskala
+            segments_list = []
+            speeds_list = []
+            styles = {}
 
-            # Farbverlauf für Speed
-            norm = plt.Normalize(color.min(), color.max())
-            colormap = mpl.cm.plasma
-            lc = LineCollection(segments, cmap=colormap, norm=norm, linestyle='-', linewidth=5)
-            lc.set_array(color)
-            ax.add_collection(lc)
+            # Schleife über ausgewählte Fahrer
+            for drv in drivers_str:
+                laps = sess.laps.pick_driver(drv).pick_fastest()
+                tel = laps.get_car_data().add_distance().telemetry
+
+                x = tel['X']
+                y = tel['Y']
+                speed = tel['Speed']
+
+                # Track-Segmente
+                points = np.array([x, y]).T.reshape(-1, 1, 2)
+                segments = np.concatenate([points[:-1], points[1:]], axis=1)
+                segments_list.append((segments, speed))
+
+                # Farbgrenzen aktualisieren
+                vmin = min(vmin, speed.min())
+                vmax = max(vmax, speed.max())
+
+                # Stil holen (Farbe pro Fahrer)
+                abbr = sess.laps[sess.laps['Driver'] == laps['Driver'].iloc[0]]['Driver'].iloc[0]
+                style = plotting.get_driver_style(abbr, session=sess)
+                styles[drv] = style
+
+            # Normierung über alle Fahrer
+            norm = plt.Normalize(vmin, vmax)
+            cmap = mpl.cm.plasma
+
+            # Alle Fahrer visualisieren
+            for (segments, speed), drv in zip(segments_list, drivers_str):
+                lc = LineCollection(segments, cmap=cmap, norm=norm, linewidth=4)
+                lc.set_array(speed)
+                lc.set_label(drv)
+                lc.set_color(styles[drv]['color'])  # Fahrerfarbe
+                ax.add_collection(lc)
 
             # Farbskala
-            cbaxes = fig.add_axes([0.25, 0.05, 0.5, 0.05])
-            normlegend = mpl.colors.Normalize(vmin=color.min(), vmax=color.max())
-            mpl.colorbar.ColorbarBase(cbaxes, norm=normlegend, cmap=colormap, orientation="horizontal")
+            cbaxes = fig.add_axes([0.25, 0.05, 0.5, 0.03])
+            mpl.colorbar.ColorbarBase(cbaxes, norm=norm, cmap=cmap, orientation='horizontal')
+            cbaxes.set_title("Geschwindigkeit [km/h]")
 
-            # Plot anzeigen
+            ax.legend(title="Fahrer", loc='upper right')
+
             st.pyplot(fig)
