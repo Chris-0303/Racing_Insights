@@ -35,24 +35,32 @@ if year: #only continue in code once year has been chosen by user
         sess = ff1.get_session(year, race_name, 'R')
         sess.load()
 
-        # Fahrer-Auswahl aus tatsächlichen Teilnehmern
-        drivers = sorted(sess['CustomDriverName'].tolist())
-        driver = st.multiselect("Wähle 2 oder 4 Fahrer zum Vergleich:", options=drivers, default=[])
+        #cache data so it doesnt always re load when choosing drivers (has to be done with a function)
+        @st.cache_data(show_spinner=False)
+        def get_race_data(year, race_nr):
+            dat = load_data(year, race_nr)
+            driver_info, laps = data_cleaner(dat)
+            return dat, driver_info, laps
 
-        if driver:
+        with st.spinner("Daten werden geladen ..."):
+            dat, driver_info, laps = get_race_data(year, race_nr)
+
+        #ask user to choose driver(s), number of drivers to compare and convert to their driver abbreviation
+        driver_options = sorted(driver_info['CustomDriverName'].tolist())
+        drivers_str = st.multiselect("Wähle 2 oder 4 Fahrer zum Vergleich:", options=driver_options, default=[])
+
+        if drivers_str:
             #print warning and stop code execution if not 2 or 4 drivers are selected
-            if len(driver) not in (2, 4):
+            if len(drivers_str) not in (2, 4):
                 st.warning(f"Achtung: Wähle 2 oder 4 Fahrer zum Vergleich")
                 st.stop()
 
             #find abbreviations of selected drivers in driver_info
-            driver_info = sess.drivers
-            drivers_abbr = driver_info.loc[driver_info['FullName'].isin(driver), 'Abbreviation'].tolist()
-
+            drivers_abbr = driver_info.loc[driver_info['CustomDriverName'].isin(drivers_str), 'Abbreviation'].tolist()
 
             #calc number of rows need in viz based on drivers_amount
-            rows = 1 if len(driver) == 2 else 2
-            lap = sess.laps.pick_drivers(driver).pick_fastest()
+            rows = 1 if len(drivers_str) == 2 else 2
+            lap = sess.laps.pick_drivers(driver_options).pick_fastest()
 
             # Telemetriedaten
             x = lap.telemetry['X']
