@@ -46,7 +46,9 @@ if year: #only continue in code once year has been chosen by user
                 st.stop()
 
             #find abbreviations of selected drivers in driver_info
-            drivers_abbr = drivers.loc[drivers['CustomDriverName'].isin(driver), 'Abbreviation'].tolist()
+            driver_info = sess.drivers
+            drivers_abbr = driver_info.loc[driver_info['FullName'].isin(driver), 'Abbreviation'].tolist()
+
 
             #calc number of rows need in viz based on drivers_amount
             rows = 1 if len(driver) == 2 else 2
