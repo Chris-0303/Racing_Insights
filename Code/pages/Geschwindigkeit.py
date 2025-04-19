@@ -52,7 +52,8 @@ if year: #only continue in code once year has been chosen by user
 
 
 
-        drivers = sorted(sess.laps['Driver'].tolist())
+        drivers = sess.laps['Driver'].unique().tolist()
+        drivers.sort()
         driver = st.selectbox("Wähle einen Fahrer", options=drivers)
 
         if driver:
