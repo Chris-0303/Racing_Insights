@@ -50,10 +50,13 @@ if year: #only continue in code once year has been chosen by user
         driver_options = sorted(driver_info['CustomDriverName'].tolist())
         drivers_str = st.selectbox("Wähle einen Fahrer", options=driver_options)"""
 
-        drivers = sorted(sess['CustomDriverName'].tolist())
+
+
+        drivers = sorted(sess.laps['CustomDriverName'].tolist())
         driver = st.selectbox("Wähle einen Fahrer", options=drivers)
 
-        lap = sess.laps.pick_drivers(driver).pick_fastest()
+        if driver:
+                lap = sess.laps.pick_drivers(driver).pick_fastest()
 
         # Get telemetry data
         x = lap.telemetry['X']              # values for x-axis
