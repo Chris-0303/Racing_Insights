@@ -52,12 +52,19 @@ if year: #only continue in code once year has been chosen by user
 
 
 
-        drivers = sess.laps['CustomDriverName'].unique().tolist()
-        drivers.sort()
-        driver = st.selectbox("Wähle einen Fahrer", options=drivers)
+            # Fahrerinformationen auslesen
+        driver_map = {d['Abbreviation']: d['FullName'] for d in sess.drivers.values()}
+        driver_abbrs = sess.laps['Driver'].unique().tolist()
+        driver_abbrs.sort()
+        driver_names = [driver_map[abbr] for abbr in driver_abbrs]
+        reverse_map = {v: k for k, v in driver_map.items()}
 
-        if driver:
-                lap = sess.laps.pick_drivers(driver).pick_fastest()
+        # Streamlit-Auswahl mit vollem Namen
+        driver_fullname = st.selectbox("Wähle einen Fahrer", options=driver_names)
+
+        if driver_fullname:
+            driver = reverse_map[driver_fullname]
+            lap = sess.laps.pick_drivers(driver).pick_fastest()
 
         # Get telemetry data
         x = lap.telemetry['X']              # values for x-axis
