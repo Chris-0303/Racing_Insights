@@ -12,7 +12,6 @@ plotting.setup_mpl()
 
 # --- User selections ---
 st.title("F1 Speed Map Visualisierung von der schnellsten Runde")
-colormap = mpl.cm.plasma
 
 # Jahr auswählen
 year = st.selectbox("Wähle eine Saison", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
@@ -61,6 +60,7 @@ if year: #only continue in code once year has been chosen by user
             lap = sess.laps.pick_drivers(driver).pick_fastest()
 
             # Get telemetry data
+            colormap = mpl.cm.plasma
             x = lap.telemetry['X']              # values for x-axis
             y = lap.telemetry['Y']              # values for y-axis
             color = lap.telemetry['Speed']      # value to base color gradient on
@@ -101,9 +101,8 @@ if year: #only continue in code once year has been chosen by user
             legend = mpl.colorbar.ColorbarBase(cbaxes, norm=normlegend, cmap=colormap,
                                             orientation="horizontal")
 
-
             # Show the plot
-            plt.show()
+            st.pyplot(fig)
 
 
 
