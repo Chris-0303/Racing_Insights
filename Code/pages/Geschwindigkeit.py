@@ -47,7 +47,7 @@ if year: #only continue in code once year has been chosen by user
 
         #ask user to choose driver(s), number of drivers to compare and convert to their driver abbreviation
         driver_options = sorted(driver_info['CustomDriverName'].tolist())
-        drivers_str = st.selectbox("Wähle den Fahrere", options=driver_options, default=[])
+        drivers_str = st.selectbox("Wähle den Fahrer", options=driver_options, default=[])
 
         lap = sess.laps.pick_drivers(drivers_str).pick_fastest()
 
