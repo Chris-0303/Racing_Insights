@@ -36,19 +36,6 @@ if year: #only continue in code once year has been chosen by user
         weekend = sess.event
         sess.load()
 
-        """        @st.cache_data(show_spinner=False)
-        def get_race_data(year, race_nr):
-            dat = load_data(year, race_nr)
-            driver_info, laps = data_cleaner(dat)
-            return dat, driver_info, laps
-
-        with st.spinner("Daten werden geladen ..."):
-            dat, driver_info, laps = get_race_data(year, race_nr)
-
-        #ask user to choose driver(s), number of drivers to compare and convert to their driver abbreviation
-        driver_options = sorted(driver_info['CustomDriverName'].tolist())
-        drivers_str = st.selectbox("Wähle einen Fahrer", options=driver_options)"""
-
         driver_row = st.selectbox(
             "Wähle einen Fahrer",
             sess.results.itertuples(index=False),
