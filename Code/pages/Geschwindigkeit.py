@@ -12,6 +12,7 @@ plotting.setup_mpl()
 
 # --- User selections ---
 st.title("F1 Speed Map Visualisierung von der schnellsten Runde")
+colormap = mpl.cm.plasma
 
 # Jahr auswählen
 year = st.selectbox("Wähle eine Saison", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
@@ -36,7 +37,7 @@ if year: #only continue in code once year has been chosen by user
         weekend = sess.event
         sess.load()
 
-        @st.cache_data(show_spinner=False)
+        """        @st.cache_data(show_spinner=False)
         def get_race_data(year, race_nr):
             dat = load_data(year, race_nr)
             driver_info, laps = data_cleaner(dat)
@@ -47,22 +48,25 @@ if year: #only continue in code once year has been chosen by user
 
         #ask user to choose driver(s), number of drivers to compare and convert to their driver abbreviation
         driver_options = sorted(driver_info['CustomDriverName'].tolist())
-        drivers_str = st.selectbox("Wähle einen Fahrer", options=driver_options)
+        drivers_str = st.selectbox("Wähle einen Fahrer", options=driver_options)"""
 
-        lap = sess.laps.pick_drivers(drivers_str).pick_fastest()
+        drivers = sorted(sess['CustomDriverName'].tolist())
+        driver = st.selectbox("Wähle einen Fahrer", options=drivers)
+
+        lap = sess.laps.pick_drivers(driver).pick_fastest()
 
         # Get telemetry data
         x = lap.telemetry['X']              # values for x-axis
         y = lap.telemetry['Y']              # values for y-axis
         color = lap.telemetry['Speed']      # value to base color gradient on
-        colormap = mpl.cm.plasma
+
 
         points = np.array([x, y]).T.reshape(-1, 1, 2)
         segments = np.concatenate([points[:-1], points[1:]], axis=1)
 
         # We create a plot with title and adjust some setting to make it look good.
         fig, ax = plt.subplots(sharex=True, sharey=True, figsize=(12, 6.75))
-        fig.suptitle(f'{weekend.name} {year} - {drivers_str} - Speed', size=24, y=0.97)
+        fig.suptitle(f'{weekend.name} {year} - {driver} - Speed', size=24, y=0.97)
 
         # Adjust margins and turn of axis
         plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.12)
