@@ -52,8 +52,8 @@ if year: #only continue in code once year has been chosen by user
 
 
 
-            # Fahrerinformationen auslesen
-        driver_map = {d['Abbreviation']: d['FullName'] for d in sess.drivers.values()}
+        # Fahrerinformationen auslesen
+        driver_map = {d['Abbreviation']: d['FullName'] for d in sess.results.values()}
         driver_abbrs = sess.laps['Driver'].unique().tolist()
         driver_abbrs.sort()
         driver_names = [driver_map[abbr] for abbr in driver_abbrs]
