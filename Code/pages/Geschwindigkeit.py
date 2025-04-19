@@ -33,9 +33,9 @@ if year: #only continue in code once year has been chosen by user
 
         # Session laden
         sess = ff1.get_session(year, race_name, 'R')
+        weekend = sess.event
         sess.load()
 
-        #cache data so it doesnt always re load when choosing drivers (has to be done with a function)
         @st.cache_data(show_spinner=False)
         def get_race_data(year, race_nr):
             dat = load_data(year, race_nr)
@@ -47,64 +47,55 @@ if year: #only continue in code once year has been chosen by user
 
         #ask user to choose driver(s), number of drivers to compare and convert to their driver abbreviation
         driver_options = sorted(driver_info['CustomDriverName'].tolist())
-        drivers_str = st.multiselect("Wähle 2 oder 4 Fahrer zum Vergleich:", options=driver_options, default=[])
+        drivers_str = st.selectbox("Wähle den Fahrere", options=driver_options, default=[])
 
-        if drivers_str:
-            #print warning and stop code execution if not 2 or 4 drivers are selected
-            if len(drivers_str) not in (2, 4):
-                st.warning("Achtung: Wähle 2 oder 4 Fahrer zum Vergleich")
-                st.stop()
+        lap = sess.laps.pick_drivers(drivers_str).pick_fastest()
 
-            # Fahrer-Abkürzungen laden
-            driver_results = sess.results[['Abbreviation', 'FullName']]
-            drivers_abbr = driver_results.loc[driver_results['FullName'].isin(drivers_str), 'Abbreviation'].tolist()
+        # Get telemetry data
+        x = lap.telemetry['X']              # values for x-axis
+        y = lap.telemetry['Y']              # values for y-axis
+        color = lap.telemetry['Speed']      # value to base color gradient on
+        colormap = mpl.cm.plasma
 
-            # Plot-Setup
-            rows = 1 if len(drivers_abbr) == 2 else 2
-            cols = 2
-            fig, axes = plt.subplots(rows, cols, figsize=(16, 8 if rows == 2 else 6), sharex=True, sharey=True)
-            fig.suptitle(f'{race_name} {year} – Speed Map Vergleich', fontsize=22)
+        points = np.array([x, y]).T.reshape(-1, 1, 2)
+        segments = np.concatenate([points[:-1], points[1:]], axis=1)
 
-            colormap = mpl.cm.plasma
+        # We create a plot with title and adjust some setting to make it look good.
+        fig, ax = plt.subplots(sharex=True, sharey=True, figsize=(12, 6.75))
+        fig.suptitle(f'{weekend.name} {year} - {drivers_str} - Speed', size=24, y=0.97)
 
-            # axes ist 2D bei 2x2, 1D bei 1x2 → flach machen für konsistentes Handling
-            axes = axes.flatten() if isinstance(axes, np.ndarray) else [axes]
-
-            for i, abbr in enumerate(drivers_abbr):
-                fastest_lap = sess.laps.pick_driver(abbr).pick_fastest()
-                telemetry = fastest_lap.telemetry
-
-                x = telemetry['X']
-                y = telemetry['Y']
-                speed = telemetry['Speed']
-
-                if x.empty or y.empty or speed.empty:
-                    st.warning(f"Keine Telemetriedaten für {abbr} verfügbar.")
-                    continue
-
-                # Liniensegmente vorbereiten
-                points = np.array([x, y]).T.reshape(-1, 1, 2)
-                segments = np.concatenate([points[:-1], points[1:]], axis=1)
-
-                norm = plt.Normalize(speed.min(), speed.max())
-                lc = LineCollection(segments, cmap=colormap, norm=norm, linewidth=4)
-                lc.set_array(speed)
-
-                ax = axes[i]
-                ax.axis('off')
-                ax.set_title(f"{drivers_str[i]} ({abbr})", fontsize=14)
-                ax.plot(x, y, color='black', linestyle='-', linewidth=14, zorder=0)
-                ax.add_collection(lc)
-
-                # Farbskala
-                cb_ax = fig.add_axes([
-                    0.05 + (i % 2) * 0.45,
-                    0.07 if rows == 1 else (0.05 if i < 2 else 0.01),
-                    0.35, 0.015
-                ])
-                mpl.colorbar.ColorbarBase(cb_ax, cmap=colormap, norm=norm, orientation='horizontal')
-                cb_ax.set_title("Speed [km/h]", fontsize=9)
+        # Adjust margins and turn of axis
+        plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.12)
+        ax.axis('off')
 
 
-            plt.tight_layout(rect=[0, 0.12, 1, 0.93])
-            st.pyplot(fig)
+        # After this, we plot the data itself.
+        # Create background track line
+        ax.plot(lap.telemetry['X'], lap.telemetry['Y'],
+                color='black', linestyle='-', linewidth=16, zorder=0)
+
+        # Create a continuous norm to map from data points to colors
+        norm = plt.Normalize(color.min(), color.max())
+        lc = LineCollection(segments, cmap=colormap, norm=norm,
+                            linestyle='-', linewidth=5)
+
+        # Set the values used for colormapping
+        lc.set_array(color)
+
+        # Merge all line segments together
+        line = ax.add_collection(lc)
+
+
+        # Finally, we create a color bar as a legend.
+        cbaxes = fig.add_axes([0.25, 0.05, 0.5, 0.05])
+        normlegend = mpl.colors.Normalize(vmin=color.min(), vmax=color.max())
+        legend = mpl.colorbar.ColorbarBase(cbaxes, norm=normlegend, cmap=colormap,
+                                        orientation="horizontal")
+
+
+        # Show the plot
+        plt.show()
+
+
+
+
