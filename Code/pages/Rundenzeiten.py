@@ -80,6 +80,11 @@ if year: #only continue in code once year has been chosen by user
             fig, axes = plt.subplots(rows, 2, figsize=(16, 8*rows), sharey=True)
             axes = axes.flatten()
 
+            # Fix for 3 drivers by  removing the 4th subplot from figure
+            if len(drivers_abbr) == 3:
+                fig.delaxes(axes[-1])
+                axes = axes[:-1]
+
             #loop to plot each driver
             for i, driver in enumerate(drivers_abbr):
                 ax = axes[i]
