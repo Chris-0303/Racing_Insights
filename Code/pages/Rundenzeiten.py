@@ -22,8 +22,8 @@ class HandlerCircle(HandlerPatch):
 fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                           color_scheme='fastf1')
 
-st.title("Rundenzeitanalyse nach Fahrer")
-st.subheader("Filtere Saison/Rennen/Fahrer für die gewünschte Analyse")
+st.title("Strategieanalyse nach Fahrer")
+st.subheader("Wähle eine Saison, ein Rennen und 2 bis 4 Fahrer und vergleiche deren Rundenzeiten im Rennverlauf")
 
 #ask user to choose year
 year = st.selectbox("Wähle eine Saison zwischen 2018 und 2025", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
@@ -62,7 +62,7 @@ if year: #only continue in code once year has been chosen by user
 
         if drivers_str: #only continue in code once driver(s) have been chosen by user
             #print warning and stop code execution if not 2 or 4 drivers are selected
-            if len(drivers_str) not in (2, 4):
+            if len(drivers_str) not in (2, 3, 4):
                 st.warning(f"Achtung: Wähle 2 bis 4 Fahrer zum Vergleich")
                 st.stop()
 
