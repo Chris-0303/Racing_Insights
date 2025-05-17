@@ -72,8 +72,6 @@ if year: #only continue in code once year has been chosen by user
             #calc number of rows need in viz based on drivers_amount
             rows = 1 if len(drivers_str) <= 2 else 2
             cols = 2
-            total_plots = rows * cols
-            num_drivers = len(drivers_abbr)
 
             #compound color mapping and add gray just in case (missing tyre values seen in 2018 data)
             compound_palette = fastf1.plotting.get_compound_mapping(session=dat)
@@ -83,10 +81,10 @@ if year: #only continue in code once year has been chosen by user
             fig, axes = plt.subplots(rows, cols, figsize=(16, 8*rows), sharey=True)
             axes = axes.flatten()
 
-            # If not using all subplots, remove unused ones from the figure and the list
-            for j in range(num_drivers, total_plots):
-                fig.delaxes(axes[j])
-            axes = axes[:num_drivers]
+            if len(drivers_str) < len(axes):
+                for j in range(len(drivers_str), len(axes)):
+                    fig.delaxes(axes[j])
+                axes = axes[:len(drivers_str)]
 
             #loop to plot each driver
             for i, driver in enumerate(drivers_abbr):
@@ -144,7 +142,6 @@ if year: #only continue in code once year has been chosen by user
                 ax.invert_yaxis()
                 ax.grid(alpha=0.3)
 
-            #Custom Legend 1 - Compounds
             #Identify all compounds actually used in the laps data
             used_compounds = laps['Compound'].dropna().unique()
 
@@ -161,11 +158,6 @@ if year: #only continue in code once year has been chosen by user
                 handletextpad=0.8, columnspacing=1.5, handlelength=1.5,
                 handler_map={mpatches.Patch: HandlerCircle()}
             )
-
-
-            #compound_legend = fig.legend(handles, [h.get_label() for h in handles],
-            #                             title="Reifentyp", loc='lower center', bbox_to_anchor=(0.3, -0.01), ncol=len(handles), frameon=False,
-            #                             fontsize='large', title_fontsize='x-large', handletextpad=0.8, columnspacing=1.5, handlelength=1.5)
 
             #Custom Legend 2 - Context Information
             rain_patch = mpatches.Patch(color='deepskyblue', label='REGEN')
