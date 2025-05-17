@@ -71,19 +71,22 @@ if year: #only continue in code once year has been chosen by user
 
             #calc number of rows need in viz based on drivers_amount
             rows = 1 if len(drivers_str) <= 2 else 2
+            cols = 2
+            total_plots = rows * cols
+            num_drivers = len(drivers_abbr)
 
             #compound color mapping and add gray just in case (missing tyre values seen in 2018 data)
             compound_palette = fastf1.plotting.get_compound_mapping(session=dat)
             compound_palette['NODATA'] = '#808080'
 
             #create 2x2 subplot layout
-            fig, axes = plt.subplots(rows, 2, figsize=(16, 8*rows), sharey=True)
+            fig, axes = plt.subplots(rows, cols, figsize=(16, 8*rows), sharey=True)
             axes = axes.flatten()
 
-            # Fix for 3 drivers by  removing the 4th subplot from figure
-            if len(drivers_abbr) == 3:
-                fig.delaxes(axes[-1])
-                axes = axes[:-1]
+            # If not using all subplots, remove unused ones from the figure and the list
+            for j in range(num_drivers, total_plots):
+                fig.delaxes(axes[j])
+            axes = axes[:num_drivers]
 
             #loop to plot each driver
             for i, driver in enumerate(drivers_abbr):
