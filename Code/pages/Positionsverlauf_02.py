@@ -12,7 +12,7 @@ st.title("Positionsverlauf im Rennen")
 st.subheader("Filtere Jahr/Rennen um den Positionsverlauf zu sehen")
 
 #ask user to choose year
-year = st.selectbox("Wähle eine Saison", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
+year = st.selectbox("Wähle eine Saison zwischen 2018 und 2025", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
                       index=None, placeholder="Saison")
 
 if year: #only continue in code once year has been chosen by user
@@ -40,7 +40,7 @@ if year: #only continue in code once year has been chosen by user
 
         #ask user to choose driver(s), number of drivers to compare and convert to their driver abbreviation
         driver_options = sorted(driver_info['CustomDriverName'].tolist())
-        drivers_str = st.multiselect("Optional: Wähle 2-4 Fahrer zum Vergleich:", options=driver_options, default=[])
+        drivers_str = st.multiselect("Optional: Wähle 2 bis 4 Fahrer zum Vergleich:", options=driver_options, default=[])
 
         #calculate laps where it was raining for any driver
         rain_laps = sorted(laps[laps["Raining"]]["LapNumber"].unique())
@@ -53,7 +53,7 @@ if year: #only continue in code once year has been chosen by user
 
         if drivers_str:
             if len(drivers_str) not in (2, 3, 4):
-                st.warning(f"Achtung: Wähle 2-4 Fahrer zum Vergleich")
+                st.warning(f"Achtung: Wähle 2 bis 4 Fahrer zum Vergleich")
                 st.stop()
             drivers_abbr = driver_info.loc[driver_info['CustomDriverName'].isin(drivers_str), 'Abbreviation'].tolist()
 

@@ -14,7 +14,7 @@ st.title("Punkteverlauf über die Season")
 st.subheader("Filtere Jahr um den Punkteverlauf der Spieler zu sehen")
 
 #ask user to choose year
-year = st.selectbox("Wähle eine Saison", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
+year = st.selectbox("Wähle eine Saison zwischen 2018 und 2025", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
                       index=None, placeholder="Saison")
 
 if year: #only continue in code once year has been chosen by user
