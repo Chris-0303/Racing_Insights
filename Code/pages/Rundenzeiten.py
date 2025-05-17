@@ -78,17 +78,8 @@ if year: #only continue in code once year has been chosen by user
             compound_palette['NODATA'] = '#808080'
 
             #create 2x2 subplot layout
-            fig, axes = plt.subplots(rows, cols, figsize=(16, 8*rows))
+            fig, axes = plt.subplots(rows, cols, figsize=(16, 8*rows), sharey=True)
             axes = axes.flatten()
-
-            if len(drivers_str) < len(axes):
-                for j in range(len(drivers_str), len(axes)):
-                    fig.delaxes(axes[j])
-                axes = axes[:len(drivers_str)]
-
-            # Track y-axis limits for alignment
-            ymins = []
-            ymaxs = []
 
             #loop to plot each driver
             for i, driver in enumerate(drivers_abbr):
@@ -143,18 +134,8 @@ if year: #only continue in code once year has been chosen by user
 
                 ax.set_xlim(left=0)
                 ax.tick_params(axis='both', labelsize=14)
-                ax.grid(alpha=0.3)
                 ax.invert_yaxis()
-
-                ymin, ymax = ax.get_ylim()
-                ymins.append(ymin)
-                ymaxs.append(ymax)
-
-            # Align all y-axes manually (after inverting)
-            ymin_global = max(ymins)
-            ymax_global = min(ymaxs)
-            for ax in axes:
-                ax.set_ylim(ymin_global, ymax_global)  # still inverted
+                ax.grid(alpha=0.3)
 
             #Identify all compounds actually used in the laps data
             used_compounds = laps['Compound'].dropna().unique()
