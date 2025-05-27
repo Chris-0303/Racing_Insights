@@ -72,7 +72,7 @@ def data_cleaner(session):
             leader_time = lap_data['Time'].min()
 
         for idx in lap_data.index:
-            laps.at[idx, 'TimeBehindLeader'] = laps.at[idx, 'Time'] - leader_time
+            laps.at[idx, 'TimeBehindLeader'] = pd.to_timedelta(laps.at[idx, 'Time'] - leader_time)
 
     # Set lap 1 to 0 delta
     laps.loc[laps['LapNumber'] == 1.0, 'TimeBehindLeader'] = pd.Timedelta(0)

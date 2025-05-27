@@ -8,7 +8,7 @@ from utils.helper_functions import load_races, load_data, data_cleaner
 fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                           color_scheme='fastf1')
 
-st.title("Positionsverlauf im Rennen, Test")
+st.title("Positionsverlauf im Rennen, finalerTest")
 st.subheader("Filtere Jahr/Rennen um den Positionsverlauf zu sehen")
 
 #ask user to choose year
@@ -122,7 +122,8 @@ if year: #only continue in code once year has been chosen by user
             ax.set_yticks([1, 5, 10, 15, 20])
             ax.set_ylabel('Position')
         else:
-            ax.set_ylim(bottom=0)
+            ax.set_ylim(bottom=-5)
+            ax.invert_yaxis()
             ax.set_ylabel('Zeit hinter Führendem (Sekunden)')
 
         ax.set_xlabel('Runde')
