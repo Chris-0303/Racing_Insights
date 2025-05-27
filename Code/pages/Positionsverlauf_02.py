@@ -2,7 +2,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import fastf1.plotting
 import matplotlib.patches as mpatches
-from utils.helper_functions import load_races, load_data, data_cleaner2
+from utils.helper_functions import load_races, load_data, data_cleaner
 
 #load agreed on color scheme from package
 fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
@@ -32,7 +32,7 @@ if year: #only continue in code once year has been chosen by user
         @st.cache_data(show_spinner=False)
         def get_race_data(year, race_nr):
             dat = load_data(year, race_nr)
-            driver_info, laps = data_cleaner2(dat)
+            driver_info, laps = data_cleaner(dat)
             return dat, driver_info, laps
 
         with st.spinner("Daten werden geladen ..."):

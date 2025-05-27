@@ -75,11 +75,8 @@ def data_cleaner(session):
     #rename missing values in tyre data (seen in 2018 data)
     laps['Compound'] = laps['Compound'].replace('nan', 'NODATA')
 
-    return driver_info, laps
-
-def data_cleaner2(session):
-    laps = session.laps.copy()
-    driver_info = session.drivers.copy()
+    # --- Add TimeBehindLeader calculation ---
+    import pandas as pd
 
     # Ensure Position is float
     laps['Position'] = laps['Position'].astype(float)
@@ -87,19 +84,25 @@ def data_cleaner2(session):
     # Initialize the column
     laps['TimeBehindLeader'] = pd.NaT
 
+    # Iterate through each lap number
     for lap in laps['LapNumber'].dropna().unique():
         lap_data = laps[laps['LapNumber'] == lap]
+
+        # Try to find leader by Position == 1.0
         leader_row = lap_data[lap_data['Position'] == 1.0]
 
         if not leader_row.empty:
             leader_time = leader_row['Time'].iloc[0]
         else:
+            # Fallback: use the minimum Time in the lap
             leader_time = lap_data['Time'].min()
+            print(f"[Info] No leader (Position == 1.0) for lap {lap}. Used min Time instead.")
 
+        # Assign time behind
         for idx in lap_data.index:
             laps.at[idx, 'TimeBehindLeader'] = laps.at[idx, 'Time'] - leader_time
 
-    # Set TimeBehindLeader to 0.0 for lap 1
+    # Set TimeBehindLeader to 0.0 for the first lap
     laps.loc[laps['LapNumber'] == 1.0, 'TimeBehindLeader'] = pd.Timedelta(0)
 
     return driver_info, laps
