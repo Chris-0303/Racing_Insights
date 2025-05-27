@@ -54,34 +54,38 @@ if year: #only continue in code once year has been chosen by user
         #Vizualize (inspired by example from fastf1 documentation)
         fig, ax = plt.subplots(figsize=(8, 6))
 
+        if drivers_str and len(drivers_str) not in (2, 3, 4):
+            st.warning("Achtung: Wähle 2 bis 4 Fahrer zum Vergleich")
+            st.stop()
+
+        # abbreviations of selected drivers, if any
+        drivers_abbr = []
         if drivers_str:
-            if len(drivers_str) not in (2, 3, 4):
-                st.warning(f"Achtung: Wähle 2 bis 4 Fahrer zum Vergleich")
-                st.stop()
             drivers_abbr = driver_info.loc[driver_info['CustomDriverName'].isin(drivers_str), 'Abbreviation'].tolist()
 
-            def get_y_values(drv_laps, y_axis_metric):
-                if y_axis_metric == "TimeBehindLeader":
-                    # Convert Timedelta to seconds for plotting
-                    return drv_laps['TimeBehindLeader'].dt.total_seconds()
-                return drv_laps['Position']
+
+        def get_y_values(drv_laps, y_axis_metric):
+            if y_axis_metric == "TimeBehindLeader":
+                return drv_laps['TimeBehindLeader'].dt.total_seconds()
+            return drv_laps['Position']
 
 
-            for drv in dat.drivers:
-                drv_laps = laps[laps['Driver'] == drv]
-                abb = drv_laps['Driver'].iloc[0]
-                y_vals = get_y_values(drv_laps, y_axis_metric)
+        # always plot all drivers
+        for drv in dat.drivers:
+            drv_laps = laps.pick_drivers(drv)
+            abb = drv_laps['Driver'].iloc[0]
+            y_vals = get_y_values(drv_laps, y_axis_metric)
 
-                if drivers_str and abb in drivers_abbr:
-                    style = fastf1.plotting.get_driver_style(identifier=abb, style=['color', 'linestyle'], session=dat)
-                    alpha = 1.0
-                    lw = 2.0
-                else:
-                    style = {'color': 'lightgray', 'linestyle': '--'}
-                    alpha = 0.5
-                    lw = 1.0
+            if abb in drivers_abbr:
+                style = fastf1.plotting.get_driver_style(identifier=abb, style=['color', 'linestyle'], session=dat)
+                alpha = 1.0
+                lw = 2.0
+            else:
+                style = {'color': 'lightgray', 'linestyle': '--'}
+                alpha = 0.5
+                lw = 1.0
 
-                ax.plot(drv_laps['LapNumber'], y_vals, label=abb, **style, alpha=alpha, linewidth=lw)
+            ax.plot(drv_laps['LapNumber'], y_vals, label=abb, **style, alpha=alpha, linewidth=lw)
 
         #add top overlay axis for rain/SC indicators
         ax_top = ax.inset_axes([0, 1.00, 1, 0.04], sharex=ax)
