@@ -68,7 +68,7 @@ if year: #only continue in code once year has been chosen by user
 
 
             for drv in dat.drivers:
-                drv_laps = laps.pick_drivers(drv)
+                drv_laps = laps[laps['Driver'] == drv]
                 abb = drv_laps['Driver'].iloc[0]
                 y_vals = get_y_values(drv_laps, y_axis_metric)
 

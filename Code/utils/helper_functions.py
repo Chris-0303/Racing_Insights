@@ -54,7 +54,7 @@ def data_cleaner(session):
                                        + " - " + driver_info['TeamName'])
 
     #load laps dataset
-    laps = session.laps
+    laps = session.laps.copy()
 
     #load weather dataset that contains marker raining / not raining once every minute, safe times where it does rain
     weather = session.weather_data
@@ -104,5 +104,7 @@ def data_cleaner(session):
 
     # Set TimeBehindLeader to 0.0 for the first lap
     laps.loc[laps['LapNumber'] == 1.0, 'TimeBehindLeader'] = pd.Timedelta(0)
+
+    laps = laps.to_df()  # convert to pandas DataFrame to ensure custom columns persist
 
     return driver_info, laps
