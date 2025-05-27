@@ -76,12 +76,12 @@ if year: #only continue in code once year has been chosen by user
             abb = drv_laps['Driver'].iloc[0]
             y_vals = get_y_values(drv_laps, y_axis_metric)
 
+            style = fastf1.plotting.get_driver_style(identifier=abb, style=['color', 'linestyle'], session=dat)
+
             if abb in drivers_abbr:
-                style = fastf1.plotting.get_driver_style(identifier=abb, style=['color', 'linestyle'], session=dat)
                 alpha = 1.0
                 lw = 2.0
             else:
-                style = {'color': 'lightgray', 'linestyle': '--'}
                 alpha = 0.5
                 lw = 1.0
 
