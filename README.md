@@ -8,8 +8,7 @@ Dieses Repository war ursprünglich auf github.zhaw.ch abelegt, wurde aber zur e
 1. [App-Link](#app-link)
 2. [Contributors](#contributors)   
 3. [Dokumentation](#dokumentation)
-   1. [Projektplan](#projektplan)
-   2. [Limitationen](#limitationen)  
+   1. [Limitationen](#limitationen)  
    3. [Verwendete Python-Pakete](#verwendete-python-pakete)
 4. [Web-App](#web-app)
 5. [Dateien](#dateien)  
@@ -17,7 +16,6 @@ Dieses Repository war ursprünglich auf github.zhaw.ch abelegt, wurde aber zur e
    2. [Personas](#Personas)
    3. [Datenbericht](#datenbericht)
    4. [Präsentationsmedien](#präsentationsmedien)
-   5. [Skripts](#Skripts)
       1. [Helper-Functions](#Helper-Functions)
       2. [Pages](#Pages)
 
