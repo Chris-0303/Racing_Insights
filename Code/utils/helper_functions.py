@@ -45,34 +45,33 @@ def data_cleaner(session):
     Parameter: session
     Return: driver_info, laps
     """
-    #load session results, choose columns to just have driver info
+    # Load session results
     driver_info = session.results[['DriverNumber', 'Abbreviation', 'FullName', 'TeamName', 'ClassifiedPosition']]
-    #change markers for DNF, DSQ and DNS in ClassifiedPosition, customize driver name
-    driver_info['ClassifiedPosition'] = driver_info['ClassifiedPosition'].replace({'R': 'DNF', 'E': 'DNF', 'D': 'DSQ',
-                                                                                   'F': 'DNS', 'W': 'DNF', 'N': 'DNF'})
-    driver_info['CustomDriverName'] = (driver_info['DriverNumber'] + " - " + driver_info['FullName']
-                                       + " - " + driver_info['TeamName'])
+    driver_info['ClassifiedPosition'] = driver_info['ClassifiedPosition'].replace({
+        'R': 'DNF', 'E': 'DNF', 'D': 'DSQ', 'F': 'DNS', 'W': 'DNF', 'N': 'DNF'
+    })
+    driver_info['CustomDriverName'] = (driver_info['DriverNumber'] + " - " +
+                                       driver_info['FullName'] + " - " +
+                                       driver_info['TeamName'])
 
-    #load laps dataset
-    laps = session.laps.copy()
+    # Get laps and add necessary telemetry columns
+    laps = session.laps
+    laps = laps.copy()  # avoid SettingWithCopy warnings
+    laps = laps.add_columns(['Time', 'LapTime', 'Compound', 'TimeBehindLeader'])
 
-    #load weather dataset that contains marker raining / not raining once every minute, safe times where it does rain
+    # Weather processing
     weather = session.weather_data
     rain_times = weather.loc[weather["Rainfall"] == True, "Time"].apply(
         lambda td: (td.components.hours, td.components.minutes)
     ).tolist()
 
-    #add rain information to every lap in the laps dataset
     def is_raining(td):
         h = td.components.hours
         m = td.components.minutes
         return (h, m) in rain_times
+
     laps["Raining"] = laps["Time"].apply(is_raining)
-
-    #needed transformation for correct plotting
     laps["LapTimeSeconds"] = laps["LapTime"].dt.total_seconds()
-
-    #rename missing values in tyre data (seen in 2018 data)
     laps['Compound'] = laps['Compound'].replace('nan', 'NODATA')
 
     # --- Add TimeBehindLeader calculation ---
