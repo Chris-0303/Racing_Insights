@@ -58,27 +58,23 @@ def data_cleaner(session):
     # Ensure Position is float
     laps['Position'] = laps['Position'].astype(float)
 
-    # Initialize TimeBehindLeader with proper dtype
-    laps['TimeBehindLeader'] = pd.NaT
+    if 'Time' in laps.columns and laps['Time'].notna().any():
+        laps['TimeBehindLeader'] = pd.NaT
+        for lap in laps['LapNumber'].dropna().unique():
+            lap_data = laps[laps['LapNumber'] == lap]
+            leader_row = lap_data[lap_data['Position'] == 1.0]
+            if not leader_row.empty:
+                leader_time = leader_row['Time'].iloc[0]
+            else:
+                leader_time = lap_data['Time'].min()
+            for idx in lap_data.index:
+                laps.at[idx, 'TimeBehindLeader'] = pd.to_timedelta(laps.at[idx, 'Time'] - leader_time)
 
-    # Loop to compute TimeBehindLeader
-    for lap in laps['LapNumber'].dropna().unique():
-        lap_data = laps[laps['LapNumber'] == lap]
-        leader_row = lap_data[lap_data['Position'] == 1.0]
-
-        if not leader_row.empty:
-            leader_time = leader_row['Time'].iloc[0]
-        else:
-            leader_time = lap_data['Time'].min()
-
-        for idx in lap_data.index:
-            laps.at[idx, 'TimeBehindLeader'] = pd.to_timedelta(laps.at[idx, 'Time'] - leader_time)
-
-    # Set lap 1 to 0 delta
-    laps.loc[laps['LapNumber'] == 1.0, 'TimeBehindLeader'] = pd.Timedelta(0)
-
-    laps['TimeBehindLeader'] = pd.to_timedelta(laps['TimeBehindLeader'])
-    laps["TimeBehindLeaderSeconds"] = laps["TimeBehindLeader"].dt.total_seconds()
+        laps.loc[laps['LapNumber'] == 1.0, 'TimeBehindLeader'] = pd.Timedelta(0)
+        laps['TimeBehindLeader'] = pd.to_timedelta(laps['TimeBehindLeader'])
+        laps['TimeBehindLeaderSeconds'] = laps['TimeBehindLeader'].dt.total_seconds()
+    else:
+        laps['TimeBehindLeaderSeconds'] = None
 
     #load weather dataset that contains marker raining / not raining once every minute, safe times where it does rain
     weather = session.weather_data
