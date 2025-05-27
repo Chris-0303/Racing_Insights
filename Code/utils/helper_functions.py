@@ -56,6 +56,27 @@ def data_cleaner(session):
     #load laps dataset
     laps = session.laps
 
+    # Ensure Position is float
+    laps['Position'] = laps['Position'].astype(float)
+
+    # Initialize TimeBehindLeader
+    laps['TimeBehindLeader'] = pd.NaT
+
+    for lap in laps['LapNumber'].dropna().unique():
+        lap_data = laps[laps['LapNumber'] == lap]
+        leader_row = lap_data[lap_data['Position'] == 1.0]
+
+        if not leader_row.empty:
+            leader_time = leader_row['Time'].iloc[0]
+        else:
+            leader_time = lap_data['Time'].min()
+
+        for idx in lap_data.index:
+            laps.at[idx, 'TimeBehindLeader'] = laps.at[idx, 'Time'] - leader_time
+
+    laps.loc[laps['LapNumber'] == 1.0, 'TimeBehindLeader'] = pd.Timedelta(0)
+    #laps["TimeBehindLeaderSeconds"] = laps["TimeBehindLeader"].dt.total_seconds()
+
     #load weather dataset that contains marker raining / not raining once every minute, safe times where it does rain
     weather = session.weather_data
     rain_times = weather.loc[weather["Rainfall"] == True, "Time"].apply(

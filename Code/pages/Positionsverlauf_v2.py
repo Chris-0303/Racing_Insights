@@ -42,6 +42,14 @@ if year: #only continue in code once year has been chosen by user
         driver_options = sorted(driver_info['CustomDriverName'].tolist())
         drivers_str = st.multiselect("Optional: Wähle 2 bis 4 Fahrer zum Vergleich:", options=driver_options, default=[])
 
+        #ask user to choose y-axis
+        y_axis_metric = st.radio(
+            "Wähle Y-Achse für den Verlauf:",
+            options=["Position", "TimeBehindLeader"],
+            index=0,
+            format_func=lambda x: "Position (Standard)" if x == "Position" else "Zeit hinter Führendem (Sekunden)"
+        )
+
         #calculate laps where it was raining for any driver
         rain_laps = sorted(laps[laps["Raining"]]["LapNumber"].unique())
 
@@ -72,7 +80,13 @@ if year: #only continue in code once year has been chosen by user
                     alpha = 0.5
                     lw = 1.0
 
-                ax.plot(drv_laps['LapNumber'], drv_laps['Position'], label=abb, **style, alpha=alpha, linewidth=lw)
+                # Determine y-values
+                if y_axis_metric == "TimeBehindLeader":
+                    y_vals = drv_laps["TimeBehindLeader"].dt.total_seconds()
+                else:
+                    y_vals = drv_laps["Position"]
+
+                ax.plot(drv_laps['LapNumber'], y_vals, label=abb, **style, alpha=alpha, linewidth=lw)
 
         else:
             for drv in dat.drivers:
@@ -80,7 +94,14 @@ if year: #only continue in code once year has been chosen by user
 
                 abb = drv_laps['Driver'].iloc[0]
                 style = fastf1.plotting.get_driver_style(identifier=abb, style=['color', 'linestyle'], session=dat)
-                ax.plot(drv_laps['LapNumber'], drv_laps['Position'], label=abb, **style)
+
+                # Determine y-values
+                if y_axis_metric == "TimeBehindLeader":
+                    y_vals = drv_laps["TimeBehindLeader"].dt.total_seconds()
+                else:
+                    y_vals = drv_laps["Position"]
+
+                ax.plot(drv_laps['LapNumber'], y_vals, label=abb, **style)
 
         #add top overlay axis for rain/SC indicators
         ax_top = ax.inset_axes([0, 1.00, 1, 0.04], sharex=ax)
@@ -95,10 +116,16 @@ if year: #only continue in code once year has been chosen by user
 
         #set ax properties and titles
         fig.suptitle(f"Positionsverlauf, {year} {race_name}", fontsize=16, fontweight='bold', y = 1.03)
-        ax.set_ylim([20.5, 0.5])
-        ax.set_yticks([1, 5, 10, 15, 20])
+
+        if y_axis_metric == "Position":
+            ax.set_ylim([20.5, 0.5])
+            ax.set_yticks([1, 5, 10, 15, 20])
+            ax.set_ylabel('Position')
+        else:
+            ax.set_ylim(bottom=0)
+            ax.set_ylabel('Zeit hinter Führendem (Sekunden)')
+
         ax.set_xlabel('Runde')
-        ax.set_ylabel('Position')
         ax.legend(bbox_to_anchor=(1.0, 1.02))
 
         #add legend
