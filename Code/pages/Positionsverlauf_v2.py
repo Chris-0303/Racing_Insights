@@ -43,12 +43,15 @@ if year: #only continue in code once year has been chosen by user
         drivers_str = st.multiselect("Optional: Wähle 2 bis 4 Fahrer zum Vergleich:", options=driver_options, default=[])
 
         #ask user to choose y-axis
-        y_axis_metric = st.radio(
-            "Wähle Y-Achse für den Verlauf:",
-            options=["Position", "TimeBehindLeaderSeconds"],
-            index=0,
-            format_func=lambda x: "Position (Standard)" if x == "Position" else "Zeit hinter Führendem (Sekunden)"
-        )
+        if "TimeBehindLeaderSeconds" in laps.columns and laps["TimeBehindLeaderSeconds"].notna().any():
+            y_axis_metric = st.radio(
+                "Wähle Y-Achse für den Verlauf:",
+                options=["Position", "TimeBehindLeaderSeconds"],
+                index=0,
+                format_func=lambda x: "Position (Standard)" if x == "Position" else "Zeit hinter Führendem (Sekunden)"
+            )
+        else:
+            y_axis_metric = "Position"
 
         #calculate laps where it was raining for any driver
         rain_laps = sorted(laps[laps["Raining"]]["LapNumber"].unique())
