@@ -75,7 +75,7 @@ def data_cleaner(session):
             laps.at[idx, 'TimeBehindLeader'] = laps.at[idx, 'Time'] - leader_time
 
     laps.loc[laps['LapNumber'] == 1.0, 'TimeBehindLeader'] = pd.Timedelta(0)
-    #laps["TimeBehindLeaderSeconds"] = laps["TimeBehindLeader"].dt.total_seconds()
+    laps["TimeBehindLeaderSeconds"] = laps["TimeBehindLeader"].dt.total_seconds()
 
     #load weather dataset that contains marker raining / not raining once every minute, safe times where it does rain
     weather = session.weather_data

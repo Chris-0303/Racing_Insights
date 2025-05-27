@@ -1,6 +1,5 @@
 import streamlit as st
 import matplotlib.pyplot as plt
-import pandas as pd
 import fastf1.plotting
 import matplotlib.patches as mpatches
 from utils.helper_functions import load_races, load_data, data_cleaner
@@ -46,7 +45,7 @@ if year: #only continue in code once year has been chosen by user
         #ask user to choose y-axis
         y_axis_metric = st.radio(
             "Wähle Y-Achse für den Verlauf:",
-            options=["Position", "TimeBehindLeader"],
+            options=["Position", "TimeBehindLeaderSeconds"],
             index=0,
             format_func=lambda x: "Position (Standard)" if x == "Position" else "Zeit hinter Führendem (Sekunden)"
         )
@@ -82,9 +81,8 @@ if year: #only continue in code once year has been chosen by user
                     lw = 1.0
 
                 # Determine y-values
-                if y_axis_metric == "TimeBehindLeader":
-                    drv_laps["TimeBehindLeader"] = pd.to_timedelta(drv_laps["TimeBehindLeader"])
-                    y_vals = drv_laps["TimeBehindLeader"].dt.total_seconds()
+                if y_axis_metric == "TimeBehindLeaderSeconds":
+                    y_vals = drv_laps["TimeBehindLeaderSeconds"]
                 else:
                     y_vals = drv_laps["Position"]
 
@@ -98,9 +96,8 @@ if year: #only continue in code once year has been chosen by user
                 style = fastf1.plotting.get_driver_style(identifier=abb, style=['color', 'linestyle'], session=dat)
 
                 # Determine y-values
-                if y_axis_metric == "TimeBehindLeader":
-                    drv_laps["TimeBehindLeader"] = pd.to_timedelta(drv_laps["TimeBehindLeader"])
-                    y_vals = drv_laps["TimeBehindLeader"].dt.total_seconds()
+                if y_axis_metric == "TimeBehindLeaderSeconds":
+                    y_vals = drv_laps["TimeBehindLeaderSeconds"]
                 else:
                     y_vals = drv_laps["Position"]
 
