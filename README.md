@@ -90,15 +90,15 @@ Das Projektkonzept wurde zu Beginn des Projekts erstellt und liegt ab in GitHub 
 
 ### Personas
 
+Liegt auf GitHub unter \Persona_Formula1.docx
 
 ### Datenbericht
 
-Template Datenbericht liegt im Moodle
+Liegt auf GitHub unter \Datenbericht - fastf1.docx
 
 ### Präsentationsmedien
 
-
-### Skripts
+Liegt auf GitHub unter \Präsentation_Racing_Insights.pptx
 
 #### Helper-Functions
 Das Skript "helper_functions.py" liegt im Ordner utils (der rein der Strukturierung dient) und dient dazu, einheitliche Funktionen zu schreiben, mit der die API abgerufen und der gesammelte Datensatz bereinigt und prozessiert wird. Es existieren folgende Funktionen:  
