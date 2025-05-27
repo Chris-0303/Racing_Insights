@@ -1,5 +1,6 @@
 import streamlit as st
 import matplotlib.pyplot as plt
+import pandas as pd
 import fastf1.plotting
 import matplotlib.patches as mpatches
 from utils.helper_functions import load_races, load_data, data_cleaner
@@ -82,6 +83,7 @@ if year: #only continue in code once year has been chosen by user
 
                 # Determine y-values
                 if y_axis_metric == "TimeBehindLeader":
+                    drv_laps["TimeBehindLeader"] = pd.to_timedelta(drv_laps["TimeBehindLeader"])
                     y_vals = drv_laps["TimeBehindLeader"].dt.total_seconds()
                 else:
                     y_vals = drv_laps["Position"]
@@ -97,6 +99,7 @@ if year: #only continue in code once year has been chosen by user
 
                 # Determine y-values
                 if y_axis_metric == "TimeBehindLeader":
+                    drv_laps["TimeBehindLeader"] = pd.to_timedelta(drv_laps["TimeBehindLeader"])
                     y_vals = drv_laps["TimeBehindLeader"].dt.total_seconds()
                 else:
                     y_vals = drv_laps["Position"]
