@@ -8,7 +8,7 @@ from utils.helper_functions import load_races, load_data, data_cleaner
 fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                           color_scheme='fastf1')
 
-st.title("Positionsverlauf im Rennen")
+st.title("Positionsverlauf im Rennen, Test")
 st.subheader("Filtere Jahr/Rennen um den Positionsverlauf zu sehen")
 
 #ask user to choose year
