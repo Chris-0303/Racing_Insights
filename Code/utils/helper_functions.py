@@ -76,3 +76,30 @@ def data_cleaner(session):
     laps['Compound'] = laps['Compound'].replace('nan', 'NODATA')
 
     return driver_info, laps
+
+def data_cleaner2(session):
+    laps = session.laps.copy()
+    driver_info = session.drivers.copy()
+
+    # Ensure Position is float
+    laps['Position'] = laps['Position'].astype(float)
+
+    # Initialize the column
+    laps['TimeBehindLeader'] = pd.NaT
+
+    for lap in laps['LapNumber'].dropna().unique():
+        lap_data = laps[laps['LapNumber'] == lap]
+        leader_row = lap_data[lap_data['Position'] == 1.0]
+
+        if not leader_row.empty:
+            leader_time = leader_row['Time'].iloc[0]
+        else:
+            leader_time = lap_data['Time'].min()
+
+        for idx in lap_data.index:
+            laps.at[idx, 'TimeBehindLeader'] = laps.at[idx, 'Time'] - leader_time
+
+    # Set TimeBehindLeader to 0.0 for lap 1
+    laps.loc[laps['LapNumber'] == 1.0, 'TimeBehindLeader'] = pd.Timedelta(0)
+
+    return driver_info, laps
