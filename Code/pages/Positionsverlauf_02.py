@@ -42,6 +42,9 @@ if year: #only continue in code once year has been chosen by user
         driver_options = sorted(driver_info['CustomDriverName'].tolist())
         drivers_str = st.multiselect("Optional: Wähle 2 bis 4 Fahrer zum Vergleich:", options=driver_options, default=[])
 
+        # y-axis selection
+        y_axis_metric = st.selectbox("Wähle die Y-Achse für den Verlauf", options=["Position", "TimeBehindLeader"])
+
         #calculate laps where it was raining for any driver
         rain_laps = sorted(laps[laps["Raining"]]["LapNumber"].unique())
 
@@ -57,30 +60,28 @@ if year: #only continue in code once year has been chosen by user
                 st.stop()
             drivers_abbr = driver_info.loc[driver_info['CustomDriverName'].isin(drivers_str), 'Abbreviation'].tolist()
 
+            def get_y_values(drv_laps, y_axis_metric):
+                if y_axis_metric == "TimeBehindLeader":
+                    # Convert Timedelta to seconds for plotting
+                    return drv_laps['TimeBehindLeader'].dt.total_seconds()
+                return drv_laps['Position']
+
+
             for drv in dat.drivers:
                 drv_laps = laps.pick_drivers(drv)
                 abb = drv_laps['Driver'].iloc[0]
+                y_vals = get_y_values(drv_laps, y_axis_metric)
 
-                if abb in drivers_abbr:
-                    # Highlight selected
+                if drivers_str and abb in drivers_abbr:
                     style = fastf1.plotting.get_driver_style(identifier=abb, style=['color', 'linestyle'], session=dat)
                     alpha = 1.0
                     lw = 2.0
                 else:
-                    # Fade others
                     style = {'color': 'lightgray', 'linestyle': '--'}
                     alpha = 0.5
                     lw = 1.0
 
-                ax.plot(drv_laps['LapNumber'], drv_laps['Position'], label=abb, **style, alpha=alpha, linewidth=lw)
-
-        else:
-            for drv in dat.drivers:
-                drv_laps = laps.pick_drivers(drv)
-
-                abb = drv_laps['Driver'].iloc[0]
-                style = fastf1.plotting.get_driver_style(identifier=abb, style=['color', 'linestyle'], session=dat)
-                ax.plot(drv_laps['LapNumber'], drv_laps['Position'], label=abb, **style)
+                ax.plot(drv_laps['LapNumber'], y_vals, label=abb, **style, alpha=alpha, linewidth=lw)
 
         #add top overlay axis for rain/SC indicators
         ax_top = ax.inset_axes([0, 1.00, 1, 0.04], sharex=ax)
@@ -95,10 +96,16 @@ if year: #only continue in code once year has been chosen by user
 
         #set ax properties and titles
         fig.suptitle(f"Positionsverlauf, {year} {race_name}", fontsize=16, fontweight='bold', y = 1.03)
-        ax.set_ylim([20.5, 0.5])
-        ax.set_yticks([1, 5, 10, 15, 20])
+
+        if y_axis_metric == "Position":
+            ax.set_ylim([20.5, 0.5])
+            ax.set_yticks([1, 5, 10, 15, 20])
+            ax.set_ylabel('Position')
+        else:
+            ax.set_ylim(bottom=0)  # ascending from top to bottom (default)
+            ax.set_ylabel('Zeit hinter Leader (s)')
+
         ax.set_xlabel('Runde')
-        ax.set_ylabel('Position')
         ax.legend(bbox_to_anchor=(1.0, 1.02))
 
         #add legend
