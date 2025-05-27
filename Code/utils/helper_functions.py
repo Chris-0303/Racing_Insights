@@ -53,15 +53,15 @@ def data_cleaner(session):
     driver_info['CustomDriverName'] = (driver_info['DriverNumber'] + " - " + driver_info['FullName']
                                        + " - " + driver_info['TeamName'])
 
-    #load laps dataset
-    laps = session.laps
+    laps = session.laps.copy()  # ensures we're not modifying a view
 
     # Ensure Position is float
     laps['Position'] = laps['Position'].astype(float)
 
-    # Initialize TimeBehindLeader
-    laps['TimeBehindLeader'] = pd.to_timedelta("NaT")
+    # Initialize TimeBehindLeader with proper dtype
+    laps['TimeBehindLeader'] = pd.NaT
 
+    # Loop to compute TimeBehindLeader
     for lap in laps['LapNumber'].dropna().unique():
         lap_data = laps[laps['LapNumber'] == lap]
         leader_row = lap_data[lap_data['Position'] == 1.0]
@@ -74,7 +74,10 @@ def data_cleaner(session):
         for idx in lap_data.index:
             laps.at[idx, 'TimeBehindLeader'] = laps.at[idx, 'Time'] - leader_time
 
+    # Set lap 1 to 0 delta
     laps.loc[laps['LapNumber'] == 1.0, 'TimeBehindLeader'] = pd.Timedelta(0)
+
+    laps['TimeBehindLeader'] = pd.to_timedelta(laps['TimeBehindLeader'])
     laps["TimeBehindLeaderSeconds"] = laps["TimeBehindLeader"].dt.total_seconds()
 
     #load weather dataset that contains marker raining / not raining once every minute, safe times where it does rain
