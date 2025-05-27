@@ -38,12 +38,12 @@ if year: #only continue in code once year has been chosen by user
         with st.spinner("Daten werden geladen ..."):
             dat, driver_info, laps = get_race_data(year, race_nr)
 
+        # y-axis selection
+        y_axis_metric = st.selectbox("Wähle die Y-Achse für den Verlauf", options=["Position", "TimeBehindLeader"])
+
         #ask user to choose driver(s), number of drivers to compare and convert to their driver abbreviation
         driver_options = sorted(driver_info['CustomDriverName'].tolist())
         drivers_str = st.multiselect("Optional: Wähle 2 bis 4 Fahrer zum Vergleich:", options=driver_options, default=[])
-
-        # y-axis selection
-        y_axis_metric = st.selectbox("Wähle die Y-Achse für den Verlauf", options=["Position", "TimeBehindLeader"])
 
         #calculate laps where it was raining for any driver
         rain_laps = sorted(laps[laps["Raining"]]["LapNumber"].unique())
