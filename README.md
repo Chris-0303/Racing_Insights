@@ -46,9 +46,6 @@ Aktualität: Rennen sind im Tool ab einem Tag nach dem Rennen verfügbar, sofern
 
 Farbschema: Zur einheitlichen Visualisierung wird in allen Anwendungen das im Paket inbegriffene Farbschema "fastf1" verwendet.
 
-### Projektplan
-
-->Brauchen wir noch einen Projektplan oder so? einfach simpel was in welchen Wochen etwa gemacht
 
 ### Limitationen
 
@@ -104,7 +101,7 @@ Liegt auf GitHub unter \Präsentation_Racing_Insights.pptx
 Das Skript "helper_functions.py" liegt im Ordner utils (der rein der Strukturierung dient) und dient dazu, einheitliche Funktionen zu schreiben, mit der die API abgerufen und der gesammelte Datensatz bereinigt und prozessiert wird. Es existieren folgende Funktionen:  
 - _**load_races:**_ Input: Jahr (User-Input). Ausgabe: Rennkalender dieses Jahres  
 - _**load_data:**_ Input: Jahr (User-Input), Rennen (User-Input). Ausgabe: Session des gewünschten Rennens  
-- _**data_cleaner:**_ Input: Session. Ausgaben:  
+- _**data_cleaner:**_ Input: Session. Ausgaben: Dataframe über driver_info und laps
 - _**driver_info:**_ Dataframe, mit dem dem User die teilnehmenden Fahrer als Auswahl gegeben werden können. Dies muss auf Rennebebe passieren, da nicht in jedem Rennen alle gleichen Fahrer am Start waren.  
 - _**laps:**_ Dataframe mit den Runden des Rennens inklusive benutzerdefinierter Zusatzelemente wie dem Wetter.  
 
@@ -112,6 +109,6 @@ Das Skript "helper_functions.py" liegt im Ordner utils (der rein der Strukturier
 
 Weiter gibt es die Pages. Jede Page beheimatet ein Skript für eine Visualisierung. Innerhalb jeder Page wird zuerst helper_functions aufgerufen und danach das abrufen der User-Inputs sowie die Visualisierung programmiert.  
 - _**Geschwindigkeit:**_ TEXT
-- _**Positionsverlauf:**_ In der Visualisierung Positionsverlauf wird der Verlauf des Rennens anhand der Positionen aller Fahrer nach Runde dargestellt.  
+- _**Positionsverlauf:**_ In der Visualisierung Positionsverlauf wird der Verlauf des Rennens anhand der Positionen oder Zeiten aller Fahrer nach Runde dargestellt.  
 - _**Punkte:**_ In der Visualisierung Punkte wird der Punkteverlauf der Rennen über die gesamte gewählte Season dargestellt.  
 - _**Rundenzeiten:**_ In der Visualisierung Rundenzeiten können die Nutzer bis zu vier Fahrer wählen, deren Rennverlauf sie anhand ihrer einzelnen Runden darstellen wollen. Neben der Entwicklung der Rundenzeiten bieten auch Elemente wie die Darstellung von Regen, Safety-Car-Phasen, Boxenstopps sowie genutzten Reifentypen Einblick in die Unterschiede der Rennstrategien verschiedener Fahrer.  
