@@ -60,7 +60,7 @@ def data_cleaner(session):
     laps['Position'] = laps['Position'].astype(float)
 
     # Initialize TimeBehindLeader
-    laps['TimeBehindLeader'] = pd.NaT
+    laps['TimeBehindLeader'] = pd.to_timedelta("NaT")
 
     for lap in laps['LapNumber'].dropna().unique():
         lap_data = laps[laps['LapNumber'] == lap]
