@@ -38,6 +38,8 @@ if year: #only continue in code once year has been chosen by user
         with st.spinner("Daten werden geladen ..."):
             dat, driver_info, laps = get_race_data(year, race_nr)
 
+        st.write("Laps columns:", laps.columns.tolist())
+
         #ask user to choose driver(s), number of drivers to compare and convert to their driver abbreviation
         driver_options = sorted(driver_info['CustomDriverName'].tolist())
         drivers_str = st.multiselect("Optional: Wähle 2 bis 4 Fahrer zum Vergleich:", options=driver_options, default=[])
