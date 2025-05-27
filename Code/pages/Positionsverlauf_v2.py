@@ -90,7 +90,7 @@ if year: #only continue in code once year has been chosen by user
 
         else:
             for drv in dat.drivers:
-                drv_laps = laps.pick_drivers(drv)
+                drv_laps = laps.pick_drivers(drv).copy()
 
                 abb = drv_laps['Driver'].iloc[0]
                 style = fastf1.plotting.get_driver_style(identifier=abb, style=['color', 'linestyle'], session=dat)
