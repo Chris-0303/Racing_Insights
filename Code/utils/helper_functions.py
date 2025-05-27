@@ -45,65 +45,34 @@ def data_cleaner(session):
     Parameter: session
     Return: driver_info, laps
     """
-    # Load session results
+    #load session results, choose columns to just have driver info
     driver_info = session.results[['DriverNumber', 'Abbreviation', 'FullName', 'TeamName', 'ClassifiedPosition']]
-    driver_info['ClassifiedPosition'] = driver_info['ClassifiedPosition'].replace({
-        'R': 'DNF', 'E': 'DNF', 'D': 'DSQ', 'F': 'DNS', 'W': 'DNF', 'N': 'DNF'
-    })
-    driver_info['CustomDriverName'] = (driver_info['DriverNumber'] + " - " +
-                                       driver_info['FullName'] + " - " +
-                                       driver_info['TeamName'])
+    #change markers for DNF, DSQ and DNS in ClassifiedPosition, customize driver name
+    driver_info['ClassifiedPosition'] = driver_info['ClassifiedPosition'].replace({'R': 'DNF', 'E': 'DNF', 'D': 'DSQ',
+                                                                                   'F': 'DNS', 'W': 'DNF', 'N': 'DNF'})
+    driver_info['CustomDriverName'] = (driver_info['DriverNumber'] + " - " + driver_info['FullName']
+                                       + " - " + driver_info['TeamName'])
 
-    # Get laps and add necessary telemetry columns
+    #load laps dataset
     laps = session.laps
-    laps = laps.copy()  # avoid SettingWithCopy warnings
-    laps = laps.add_columns(['Time', 'LapTime', 'Compound', 'TimeBehindLeader'])
 
-    # Weather processing
+    #load weather dataset that contains marker raining / not raining once every minute, safe times where it does rain
     weather = session.weather_data
     rain_times = weather.loc[weather["Rainfall"] == True, "Time"].apply(
         lambda td: (td.components.hours, td.components.minutes)
     ).tolist()
 
+    #add rain information to every lap in the laps dataset
     def is_raining(td):
         h = td.components.hours
         m = td.components.minutes
         return (h, m) in rain_times
-
     laps["Raining"] = laps["Time"].apply(is_raining)
+
+    #needed transformation for correct plotting
     laps["LapTimeSeconds"] = laps["LapTime"].dt.total_seconds()
+
+    #rename missing values in tyre data (seen in 2018 data)
     laps['Compound'] = laps['Compound'].replace('nan', 'NODATA')
-
-    # --- Add TimeBehindLeader calculation ---
-    import pandas as pd
-
-    # Ensure Position is float
-    laps['Position'] = laps['Position'].astype(float)
-
-    # Initialize the column
-    laps['TimeBehindLeader'] = pd.NaT
-
-    # Iterate through each lap number
-    for lap in laps['LapNumber'].dropna().unique():
-        lap_data = laps[laps['LapNumber'] == lap]
-
-        # Try to find leader by Position == 1.0
-        leader_row = lap_data[lap_data['Position'] == 1.0]
-
-        if not leader_row.empty:
-            leader_time = leader_row['Time'].iloc[0]
-        else:
-            # Fallback: use the minimum Time in the lap
-            leader_time = lap_data['Time'].min()
-            print(f"[Info] No leader (Position == 1.0) for lap {lap}. Used min Time instead.")
-
-        # Assign time behind
-        for idx in lap_data.index:
-            laps.at[idx, 'TimeBehindLeader'] = laps.at[idx, 'Time'] - leader_time
-
-    # Set TimeBehindLeader to 0.0 for the first lap
-    laps.loc[laps['LapNumber'] == 1.0, 'TimeBehindLeader'] = pd.Timedelta(0)
-
-    laps = laps.to_df()  # convert to pandas DataFrame to ensure custom columns persist
 
     return driver_info, laps
