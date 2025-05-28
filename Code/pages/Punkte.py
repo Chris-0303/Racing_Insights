@@ -25,6 +25,12 @@ if year: #only continue in code once year has been chosen by user
 
     #new df to save data from each round inot one df
     combined_df = pd.DataFrame()
+
+    # Driver options (alphabetic) for multiselect
+    driver_options = sorted(combined_df["Abbreviation"].unique().tolist())
+    # User can select 1 or multiple drivers
+    highlight_drivers = st.multiselect("Fahrer zum Highlighten auswählen:", options=driver_options, default=[])
+
     for roundnr in calendar_filtered["RoundNumber"]:
                          
         #get RoundNUmber and EvnetName
@@ -65,17 +71,14 @@ if year: #only continue in code once year has been chosen by user
     # Plot-Setup
     fig, ax = plt.subplots(figsize=(12, 6))
 
-    # Fahrer nach Totalpunkten sortiert plotten
+    # Fahrer sortiert nach Punkten zeichnen
     for driver in sorted_drivers:
         group = combined_df[combined_df["Abbreviation"] == driver]
         color = "#" + group["TeamColor"].iloc[0]
-        ax.plot(group["RoundNumber"], group["CumulativePoints"], label=driver, color=color)
 
-    ax.set_title(f"Total Punkte der Fahrer – Saison {year}")
-    ax.set_xlabel("Runde")
-    ax.set_ylabel("Total Punkte")
-    ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title="Fahrer (nach Punkten)")
-    ax.grid(True, linestyle='--', alpha=0.5)
-    st.pyplot(fig)
-
+        # Wenn Fahrer ausgewählt wurde, hervorheben
+        if not highlight_drivers or driver in highlight_drivers:
+            ax.plot(group["RoundNumber"], group["CumulativePoints"], label=driver, color=color, linewidth=2.5)
+        else:
+            ax.plot(group["RoundNumber"], group["CumulativePoints"], label=driver, color=color, alpha=0.3, linewidth=1.0)
 
