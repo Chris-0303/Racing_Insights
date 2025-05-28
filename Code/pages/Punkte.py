@@ -74,7 +74,7 @@ if year: #only continue in code once year has been chosen by user
     driver_map = {label: abbr for label, abbr in zip(driver_labels, final_points.sort_values(ascending=False).index)}
 
     # Multiselect
-    highlight_labels = st.multiselect("Fahrer zum Highlighten auswählen:", options=driver_labels, default=[])
+    highlight_labels = st.multiselect("Beliebige Anzhal an Fahrer zum Highlighten auswählen:", options=driver_labels, default=[])
     highlight_drivers = [driver_map[label] for label in highlight_labels]
 
     # Plot-Setup
