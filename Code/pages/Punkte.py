@@ -57,25 +57,36 @@ if year: #only continue in code once year has been chosen by user
     combined_df["CumulativePoints"] = combined_df.sort_values("RoundNumber") \
         .groupby("Abbreviation")["Points"] \
         .cumsum()
-    
-    # Driver options (alphabetic) for multiselect
-    driver_options = sorted(combined_df["Abbreviation"].unique().tolist())
-    # User can select 1 or multiple drivers
-    highlight_drivers = st.multiselect("Fahrer zum Highlighten auswählen:", options=driver_options, default=[])    
-
+     
     # Final Points for each Driver
     final_points = combined_df.groupby("Abbreviation")["CumulativePoints"].max()
     sorted_drivers = final_points.sort_values(ascending=False).index.tolist()
 
+    # Mapping von Abbreviation → CustomDriverName
+    combined_df["CustomDriverName"] = (
+        combined_df["DriverNumber"] + " - " +
+        combined_df["FullName"] + " - " +
+        combined_df["TeamColor"]  # oder TeamName falls du den hast
+    )
+    name_map = combined_df.drop_duplicates("Abbreviation").set_index("Abbreviation")["CustomDriverName"].to_dict()
+
+    # Labels in format "44 - Lewis Hamilton - Mercedes" (like in Rundenzeiten.py), sorted by Point
+    driver_labels = [name_map[abbr] for abbr in final_points.sort_values(ascending=False).index]
+    driver_map = {label: abbr for label, abbr in zip(driver_labels, final_points.sort_values(ascending=False).index)}
+
+    # Multiselect
+    highlight_labels = st.multiselect("Fahrer zum Highlighten auswählen:", options=driver_labels, default=[])
+    highlight_drivers = [driver_map[label] for label in highlight_labels]
+
     # Plot-Setup
     fig, ax = plt.subplots(figsize=(12, 6))
 
-    # Fahrer sortiert nach Punkten zeichnen
+    # Driver sorted by points
     for driver in sorted_drivers:
         group = combined_df[combined_df["Abbreviation"] == driver]
         color = "#" + group["TeamColor"].iloc[0]
 
-        # Wenn Fahrer ausgewählt wurde, hervorheben
+        # Hihglight Driver when selected
         if not highlight_drivers or driver in highlight_drivers:
             ax.plot(group["RoundNumber"], group["CumulativePoints"], label=driver, color=color, linewidth=2.5)
         else:
