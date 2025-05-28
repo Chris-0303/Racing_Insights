@@ -26,11 +26,6 @@ if year: #only continue in code once year has been chosen by user
     #new df to save data from each round inot one df
     combined_df = pd.DataFrame()
 
-    # Driver options (alphabetic) for multiselect
-    driver_options = sorted(combined_df["Abbreviation"].unique().tolist())
-    # User can select 1 or multiple drivers
-    highlight_drivers = st.multiselect("Fahrer zum Highlighten auswählen:", options=driver_options, default=[])
-
     for roundnr in calendar_filtered["RoundNumber"]:
                          
         #get RoundNUmber and EvnetName
@@ -63,6 +58,10 @@ if year: #only continue in code once year has been chosen by user
         .groupby("Abbreviation")["Points"] \
         .cumsum()
     
+    # Driver options (alphabetic) for multiselect
+    driver_options = sorted(combined_df["Abbreviation"].unique().tolist())
+    # User can select 1 or multiple drivers
+    highlight_drivers = st.multiselect("Fahrer zum Highlighten auswählen:", options=driver_options, default=[])    
 
     # Final Points for each Driver
     final_points = combined_df.groupby("Abbreviation")["CumulativePoints"].max()
