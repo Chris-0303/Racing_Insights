@@ -10,8 +10,8 @@ fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
 
 #fastf1.Cache.enable_cache('./f1_cache')  # Lokaler Cache empfohlen!
 
-st.title("Punkteverlauf über die Season")
-st.subheader("Filtere Jahr um den Punkteverlauf der Spieler zu sehen")
+st.title("Punkteverlauf über die Saison")
+st.subheader("Filtere Jahr um den Punkteverlauf der Fahrer zu sehen")
 
 #ask user to choose year
 year = st.selectbox("Wähle eine Saison zwischen 2018 und 2025", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
@@ -33,7 +33,7 @@ if year: #only continue in code once year has been chosen by user
         
         #infos Text "Daten werden geladen"
         with st.spinner("Daten werden geladen ..."):
-            print(f"Lade Runde:{roundnr} - {event_name}")
+            print(f"Lade Rennen:{roundnr} - {event_name}")
         
             #load each round for choosen year 
             session = fastf1.get_session(year, roundnr, 'Race')
@@ -58,17 +58,24 @@ if year: #only continue in code once year has been chosen by user
         .cumsum()
     
 
+    # Final Points for each Driver
+    final_points = combined_df.groupby("Abbreviation")["CumulativePoints"].max()
+    sorted_drivers = final_points.sort_values(ascending=False).index.tolist()
+
     # Plot-Setup
     fig, ax = plt.subplots(figsize=(12, 6))
 
-
-    for driver, group in combined_df.groupby("Abbreviation"):
-      color = "#" + group["TeamColor"].iloc[0]
-      ax.plot(group["RoundNumber"], group["CumulativePoints"], label=driver, color=color)
+    # Fahrer nach Totalpunkten sortiert plotten
+    for driver in sorted_drivers:
+        group = combined_df[combined_df["Abbreviation"] == driver]
+        color = "#" + group["TeamColor"].iloc[0]
+        ax.plot(group["RoundNumber"], group["CumulativePoints"], label=driver, color=color)
 
     ax.set_title(f"Total Punkte der Fahrer – Saison {year}")
     ax.set_xlabel("Runde")
     ax.set_ylabel("Total Punkte")
-    ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
-    ax.grid(True, linestyle='--', alpha=0.5)    
+    ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title="Fahrer (nach Punkten)")
+    ax.grid(True, linestyle='--', alpha=0.5)
     st.pyplot(fig)
+
+
