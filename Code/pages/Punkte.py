@@ -41,8 +41,12 @@ if year: #only continue in code once year has been chosen by user
             session.load(telemetry=False, weather=False)
                     
             #save Results in a DataFrame (only keep needed cols)
-            results = session.results
-            results_filter = pd.DataFrame(results[["DriverNumber", "Abbreviation", "FullName", "TeamName", "TeamColor", "CountryCode", "Points"]])
+            #results = session.results
+            #results_filter = pd.DataFrame(results[["DriverNumber", "Abbreviation", "FullName", "TeamName", "TeamColor", "CountryCode", "Points"]])
+            driver_info, _ = data_cleaner(session)
+            results = session.results[["Abbreviation", "Points", "TeamColor"]]
+            results_filter = pd.merge(driver_info, results, on="Abbreviation")
+
             
             #create new col to have RoundNUmber and EvnetName in DF as well
             results_filter["RoundNumber"] = r_nr
