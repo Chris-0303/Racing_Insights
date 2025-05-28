@@ -42,7 +42,7 @@ if year: #only continue in code once year has been chosen by user
                     
             #save Results in a DataFrame (only keep needed cols)
             results = session.results
-            results_filter = pd.DataFrame(results[["DriverNumber", "Abbreviation", "FullName", "TeamColor", "CountryCode", "Points"]])
+            results_filter = pd.DataFrame(results[["DriverNumber", "Abbreviation", "FullName", "TeamName", "TeamColor", "CountryCode", "Points"]])
             
             #create new col to have RoundNUmber and EvnetName in DF as well
             results_filter["RoundNumber"] = r_nr
