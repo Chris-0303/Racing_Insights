@@ -65,7 +65,7 @@ if year: #only continue in code once year has been chosen by user
     combined_df["CustomDriverName"] = (
         combined_df["DriverNumber"] + " - " +
         combined_df["FullName"] + " - " +
-        combined_df["TeamColor"]  # oder TeamName falls du den hast
+        combined_df["TeamName"]
     )
     name_map = combined_df.drop_duplicates("Abbreviation").set_index("Abbreviation")["CustomDriverName"].to_dict()
 
