@@ -54,17 +54,18 @@ Zudem wurde erkannt, dass es aufgrund unserer leistungsintensiven Datenabfragen 
 
 In der Folge werden die im Projekt verwendeten Python-Pakete aufgelistet und erklärt, zu welchem Zweck sie gebraucht wurden  
 
-| Paket      | Zweck              | 
-| :---:      |     :---:          | 
-| streamlit	 |	Webapp	          |
-| fastf1	    |	Datenbeschaffung	 |
-| warnings	 |	Datenexploration	 |
-| pandas	    |	Datenbearbeitung	 |
-| numpy	    |	Datenbearbeitung	 |
-| re	       |	Datenbearbeitung	 |
-| datetime	 |	Datenbearbeitung	 |
+|   Paket    |       Zweck        | 
+|:----------:|:------------------:| 
+| streamlit	 |      	Webapp	      |
+|  fastf1	   | 	Datenbeschaffung	 |
+| warnings	  | 	Datenexploration	 |
+|  pandas	   | 	Datenbearbeitung	 |
+|   numpy	   | 	Datenbearbeitung	 |
+|    re	     | 	Datenbearbeitung	 |
+| datetime	  | 	Datenbearbeitung	 |
 | matplotlib |	Datenvisualisierung|
-| seaborn	 |	Datenvisualisierung|
+|  seaborn	  |	Datenvisualisierung|
+|   scipy	   |Datenvisualisierung |
 
 
 ## Web-App
@@ -106,7 +107,7 @@ Das Skript "helper_functions.py" liegt im Ordner utils (der rein der Strukturier
 #### Pages 
 
 Weiter gibt es die Pages. Jede Page beheimatet ein Skript für eine Visualisierung. Innerhalb jeder Page wird zuerst helper_functions aufgerufen und danach das abrufen der User-Inputs sowie die Visualisierung programmiert.  
-- _**Geschwindigkeit:**_ TEXT
-- _**Positionsverlauf:**_ In der Visualisierung Positionsverlauf wird der Verlauf des Rennens anhand der Positionen oder Zeiten aller Fahrer nach Runde dargestellt.  
+- _**Geschwindigkeit:**_ In der Visualisierung Geschwindigkeit werden die schnellsten Runden zweier Fahrer in einem Rennen zuerst einzeln nach Geschwindigkeit pro Streckenabschnitt dargestellt und danach miteinander verglichen und zu zeigen, welcher Fahrer wo auf der Strecke schneller war. 
+- _**Positionsverlauf:**_ In der Visualisierung Positionsverlauf wird der Verlauf des Rennens anhand der Positionen oder Zeitabstände aller Fahrer nach Runde dargestellt.  
 - _**Punkte:**_ In der Visualisierung Punkte wird der Punkteverlauf der Rennen über die gesamte gewählte Season dargestellt.  
 - _**Rundenzeiten:**_ In der Visualisierung Rundenzeiten können die Nutzer bis zu vier Fahrer wählen, deren Rennverlauf sie anhand ihrer einzelnen Runden darstellen wollen. Neben der Entwicklung der Rundenzeiten bieten auch Elemente wie die Darstellung von Regen, Safety-Car-Phasen, Boxenstopps sowie genutzten Reifentypen Einblick in die Unterschiede der Rennstrategien verschiedener Fahrer.  
