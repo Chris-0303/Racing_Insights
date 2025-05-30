@@ -89,7 +89,7 @@ if year: #only continue in code once year has been chosen by user
             ax.plot(group["RoundNumber"], group["CumulativePoints"], label=driver, color=color, alpha=0.2, linewidth=1.0)
 
     ax.set_title(f"Total Punkte der Fahrer – Saison {year}")
-    ax.set_xlabel("Runde")
+    ax.set_xlabel("Rennen")
     ax.set_ylabel("Total Punkte")
     ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title="Fahrer (nach Punkten)")
     ax.grid(True, linestyle='--', alpha=0.5)
