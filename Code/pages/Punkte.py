@@ -75,7 +75,7 @@ if year: #only continue in code once year has been chosen by user
     highlight_drivers = [driver_map[label] for label in highlight_labels]
 
     # Plot-Setup
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(12, 8))
 
     # Driver sorted by points
     for driver in sorted_drivers:
