@@ -8,8 +8,14 @@ import fastf1
 from fastf1 import plotting
 import matplotlib.gridspec as gridspec
 from scipy.interpolate import interp1d
+from matplotlib.colors import LinearSegmentedColormap
 
 plotting.setup_mpl()
+
+# Define your custom diverging colormap (e.g., green for one driver, orange for the other)
+custom_cmap = LinearSegmentedColormap.from_list(
+    "custom_diff", ["green", "white", "#633a34"]
+)
 
 # --- User selections ---
 st.title("Visualisierung der Geschwindigkeit auf der schnellsten Runde")
@@ -150,7 +156,7 @@ if year: #only continue in code once year has been chosen by user
             cmap = mpl.cm.seismic  # Blue to red diverging
             diff_norm = mpl.colors.TwoSlopeNorm(vmin=-20, vcenter=0, vmax=20)  # adjust limits as needed
 
-            lc = LineCollection(segments, cmap=cmap, norm=diff_norm, linewidth=6)
+            lc = LineCollection(segments, cmap=custom_cmap, norm=diff_norm, linewidth=6)
             lc.set_array(speed_diff[:-1])  # one value per segment
 
             # Plot on ax_bottom
@@ -162,7 +168,7 @@ if year: #only continue in code once year has been chosen by user
 
             # Colorbar for difference
             cbax_diff = fig.add_axes([0.25, 0.1, 0.5, 0.015])
-            cb = mpl.colorbar.ColorbarBase(cbax_diff, cmap=cmap, norm=diff_norm, orientation='horizontal',
+            cb = mpl.colorbar.ColorbarBase(cbax_diff, cmap=custom_cmap, norm=diff_norm, orientation='horizontal',
                                            label=f"{drivers[1]} schneller        ←        →        {drivers[0]} schneller")
 
 
